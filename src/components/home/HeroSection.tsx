@@ -79,7 +79,7 @@ const HeroSection = () => {
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
               <img
                 src={portfolio1}
-                alt="Trabalho de decoração NZINGA'ARTE"
+                alt="Trabalho de decoração NZINGA'RTE"
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-foreground/20 to-transparent" />

@@ -14,11 +14,11 @@ const Footer = () => {
             <div className="flex items-center gap-3">
               <img
                 src={logoNzinga}
-                alt="NZINGA'ARTE Logo"
+                alt="NZINGA'RTE Logo"
                 className="h-12 w-auto object-contain brightness-0 invert"
               />
               <div>
-                <h3 className="font-display text-xl font-bold">NZINGA'ARTE</h3>
+                <h3 className="font-display text-xl font-bold">NZINGA'RTE</h3>
                 <p className="text-sm opacity-80">Fazer bem, faz bem</p>
               </div>
             </div>
@@ -187,7 +187,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-background/20 text-center">
           <p className="text-sm opacity-60">
-            © {currentYear} NZINGA'ARTE. Todos os direitos reservados.
+            © {currentYear} NZINGA'RTE. Todos os direitos reservados.
           </p>
         </div>
       </div>

@@ -22,7 +22,7 @@ const AboutPreview = () => {
             <div className="relative aspect-square rounded-2xl overflow-hidden shadow-elegant">
               <img
                 src={portfolio2}
-                alt="Equipa NZINGA'ARTE em trabalho"
+                alt="Equipa NZINGA'RTE em trabalho"
                 className="w-full h-full object-cover"
               />
             </div>
@@ -42,7 +42,7 @@ const AboutPreview = () => {
               Fazer bem, faz bem
             </h2>
             <p className="text-muted-foreground leading-relaxed">
-              A NZINGA'ARTE é especializada em prestação de serviços de
+              A NZINGA'RTE é especializada em prestação de serviços de
               decoração interna em Mbanza Kongo, Angola. Trabalhamos com
               profissionalismo, qualidade e compromisso para valorizar cada
               detalhe da sua casa.

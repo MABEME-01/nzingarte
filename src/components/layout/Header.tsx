@@ -50,12 +50,12 @@ const Header = () => {
           <Link to="/" className="flex items-center gap-3">
             <img
               src={logoNzinga}
-              alt="NZINGA'ARTE Logo"
+              alt="NZINGA'RTE Logo"
               className="h-12 w-auto object-contain"
             />
             <div className="hidden sm:block">
               <h1 className="font-display text-xl font-bold text-foreground">
-                NZINGA'ARTE
+                NZINGA'RTE
               </h1>
               <p className="text-xs text-muted-foreground">
                 Fazer bem, faz bem

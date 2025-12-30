@@ -10,16 +10,16 @@ const Sobre = () => {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <span className="text-primary font-medium text-sm uppercase tracking-wider">Sobre Nós</span>
-              <h1 className="font-display text-4xl font-bold text-foreground mt-2 mb-6">NZINGA'ARTE</h1>
+              <h1 className="font-display text-4xl font-bold text-foreground mt-2 mb-6">NZINGA'RTE</h1>
               <p className="text-muted-foreground leading-relaxed mb-4">
-                A NZINGA'ARTE é uma empresa especializada em prestação de serviços de decoração interna, localizada em Mbanza Kongo, Angola.
+                A NZINGA'RTE é uma empresa especializada em prestação de serviços de decoração interna, localizada em Mbanza Kongo, Angola.
               </p>
               <p className="text-muted-foreground leading-relaxed">
                 Com uma equipa de profissionais experientes, transformamos espaços simples em ambientes modernos, elegantes e funcionais. O nosso lema "Fazer bem, faz bem" reflete o compromisso com a qualidade e satisfação do cliente.
               </p>
             </div>
             <div className="relative aspect-square rounded-2xl overflow-hidden shadow-elegant">
-              <img src={portfolio2} alt="Equipa NZINGA'ARTE" className="w-full h-full object-cover" />
+              <img src={portfolio2} alt="Equipa NZINGA'RTE" className="w-full h-full object-cover" />
             </div>
           </div>
         </div>
