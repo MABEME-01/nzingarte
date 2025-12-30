@@ -38,20 +38,33 @@ const ServiceCard = ({ service, variant = "default" }: ServiceCardProps) => {
   return (
     <Link
       to={`/servicos/${service.id}`}
-      className="group block p-6 rounded-2xl bg-card border border-border hover:border-primary/30 hover:shadow-elegant transition-all duration-300 hover:-translate-y-1"
+      className="group block rounded-2xl bg-card border border-border hover:border-primary/30 hover:shadow-elegant transition-all duration-300 hover:-translate-y-1 overflow-hidden"
     >
-      <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 group-hover:scale-110">
-        <IconComponent className="h-7 w-7" />
+      {/* Service Image */}
+      <div className="aspect-[4/3] overflow-hidden">
+        <img
+          src={service.image}
+          alt={service.name}
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+        />
       </div>
-      <h3 className="font-display text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
-        {service.name}
-      </h3>
-      <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-        {service.shortDescription}
-      </p>
-      <div className="flex items-center gap-2 text-primary font-medium text-sm">
-        <span>Ver mais</span>
-        <ArrowRight className="h-4 w-4 group-hover:translate-x-2 transition-transform duration-300" />
+      
+      <div className="p-6">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+            <IconComponent className="h-5 w-5" />
+          </div>
+          <h3 className="font-display text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+            {service.name}
+          </h3>
+        </div>
+        <p className="text-muted-foreground text-sm leading-relaxed mb-4">
+          {service.shortDescription}
+        </p>
+        <div className="flex items-center gap-2 text-primary font-medium text-sm">
+          <span>Ver mais</span>
+          <ArrowRight className="h-4 w-4 group-hover:translate-x-2 transition-transform duration-300" />
+        </div>
       </div>
     </Link>
   );
