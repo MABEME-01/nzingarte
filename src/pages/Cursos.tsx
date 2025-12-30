@@ -9,7 +9,7 @@ const Cursos = () => {
         <div className="container mx-auto px-4 text-center">
           <span className="text-primary font-medium text-sm uppercase tracking-wider">Formação</span>
           <h1 className="font-display text-4xl font-bold text-foreground mt-2 mb-4">Cursos</h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto">Aprenda com os profissionais da NZINGA'ARTE.</p>
+          <p className="text-muted-foreground max-w-2xl mx-auto">Aprenda com os profissionais da NZINGA'RTE.</p>
         </div>
       </section>
       <section className="py-20 bg-background">

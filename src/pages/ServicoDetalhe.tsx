@@ -166,7 +166,7 @@ const ServicoDetalhe = () => {
                   </div>
                 </div>
                 <p className="text-muted-foreground mb-6">
-                  Na NZINGA'ARTE, acreditamos que cada projecto merece dedicação
+                  Na NZINGA'RTE, acreditamos que cada projecto merece dedicação
                   total. A nossa equipa está pronta para transformar a sua visão
                   em realidade.
                 </p>
