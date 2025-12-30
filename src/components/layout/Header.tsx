@@ -1,7 +1,9 @@
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Phone } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Menu, X, Phone, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { User as SupabaseUser } from "@supabase/supabase-js";
 import logoNzinga from "@/assets/logo-nzinga.png";
 
 const navLinks = [
@@ -15,7 +17,28 @@ const navLinks = [
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [user, setUser] = useState<SupabaseUser | null>(null);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setUser(session?.user ?? null);
+      }
+    );
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/");
+  };
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -73,6 +96,19 @@ const Header = () => {
             <Button size="sm" asChild>
               <Link to="/contactos">Pedir Orçamento</Link>
             </Button>
+            {user ? (
+              <Button variant="ghost" size="sm" onClick={handleLogout} className="flex items-center gap-2">
+                <LogOut className="h-4 w-4" />
+                Sair
+              </Button>
+            ) : (
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/auth" className="flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  Entrar
+                </Link>
+              </Button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -124,6 +160,19 @@ const Header = () => {
                     Pedir Orçamento
                   </Link>
                 </Button>
+                {user ? (
+                  <Button variant="ghost" onClick={handleLogout} className="flex items-center justify-center gap-2">
+                    <LogOut className="h-4 w-4" />
+                    Sair
+                  </Button>
+                ) : (
+                  <Button variant="ghost" asChild>
+                    <Link to="/auth" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-center gap-2">
+                      <User className="h-4 w-4" />
+                      Entrar
+                    </Link>
+                  </Button>
+                )}
               </div>
             </nav>
           </div>

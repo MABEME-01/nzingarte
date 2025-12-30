@@ -5,13 +5,6 @@ import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import { getServiceById, services } from "@/data/services";
-import portfolio1 from "@/assets/portfolio-1.jpg";
-import portfolio2 from "@/assets/portfolio-2.jpg";
-import portfolio3 from "@/assets/portfolio-3.jpg";
-import portfolio4 from "@/assets/portfolio-4.jpg";
-
-// Galeria genérica para todos os serviços
-const galleryImages = [portfolio1, portfolio2, portfolio3, portfolio4];
 
 const beneficios = [
   "Profissionais experientes e qualificados",
@@ -123,7 +116,7 @@ const ServicoDetalhe = () => {
               <div className="relative">
                 <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
                   <img
-                    src={galleryImages[0]}
+                    src={service.image}
                     alt={service.name}
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                   />
@@ -131,39 +124,6 @@ const ServicoDetalhe = () => {
                 <div className="absolute -bottom-4 -right-4 w-full h-full border-2 border-primary/20 rounded-2xl -z-10" />
               </div>
             </AnimatedSection>
-          </div>
-        </div>
-      </section>
-
-      {/* Gallery Section */}
-      <section className="py-16 bg-background">
-        <div className="container mx-auto px-4">
-          <AnimatedSection className="text-center mb-12">
-            <span className="text-primary font-medium text-sm uppercase tracking-wider">
-              Galeria
-            </span>
-            <h2 className="font-display text-3xl font-bold text-foreground mt-2">
-              Trabalhos Realizados
-            </h2>
-          </AnimatedSection>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {galleryImages.map((image, index) => (
-              <AnimatedSection
-                key={index}
-                animation="scale-in"
-                delay={index * 100}
-              >
-                <div className="group relative aspect-square rounded-xl overflow-hidden cursor-pointer">
-                  <img
-                    src={image}
-                    alt={`${service.name} - Exemplo ${index + 1}`}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/20 transition-colors duration-300" />
-                </div>
-              </AnimatedSection>
-            ))}
           </div>
         </div>
       </section>

@@ -10,6 +10,7 @@ import ServicoDetalhe from "./pages/ServicoDetalhe";
 import Portfolio from "./pages/Portfolio";
 import Cursos from "./pages/Cursos";
 import Contactos from "./pages/Contactos";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/cursos" element={<Cursos />} />
           <Route path="/contactos" element={<Contactos />} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
