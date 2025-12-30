@@ -38,9 +38,9 @@ const ServiceCard = ({ service, variant = "default" }: ServiceCardProps) => {
   return (
     <Link
       to={`/servicos/${service.id}`}
-      className="group block p-6 rounded-2xl bg-card border border-border hover:border-primary/30 hover:shadow-elegant transition-all duration-300"
+      className="group block p-6 rounded-2xl bg-card border border-border hover:border-primary/30 hover:shadow-elegant transition-all duration-300 hover:-translate-y-1"
     >
-      <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+      <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 group-hover:scale-110">
         <IconComponent className="h-7 w-7" />
       </div>
       <h3 className="font-display text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
@@ -51,7 +51,7 @@ const ServiceCard = ({ service, variant = "default" }: ServiceCardProps) => {
       </p>
       <div className="flex items-center gap-2 text-primary font-medium text-sm">
         <span>Ver mais</span>
-        <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+        <ArrowRight className="h-4 w-4 group-hover:translate-x-2 transition-transform duration-300" />
       </div>
     </Link>
   );
