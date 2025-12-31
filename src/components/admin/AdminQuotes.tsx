@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Eye, Trash2, Mail, Phone, Calendar, MessageSquare } from "lucide-react";
+import { Eye, Trash2, Mail, Phone, Calendar, MessageSquare, Download } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
@@ -116,6 +116,29 @@ const AdminQuotes = () => {
     filterStatus === "all" ? true : q.status === filterStatus
   );
 
+  const exportCSV = () => {
+    const headers = ["Nome", "Email", "Telefone", "Serviço", "Mensagem", "Estado", "Data"];
+    const rows = filteredQuotes.map(q => [
+      q.name,
+      q.email,
+      q.phone || "",
+      q.service_name || "",
+      `"${q.message.replace(/"/g, '""')}"`,
+      statusLabels[q.status],
+      format(new Date(q.created_at), "dd/MM/yyyy HH:mm")
+    ]);
+    
+    const csv = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `orcamentos-${format(new Date(), "yyyy-MM-dd")}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success("CSV exportado com sucesso");
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -123,19 +146,25 @@ const AdminQuotes = () => {
           <h2 className="font-display text-2xl font-bold text-foreground">Pedidos de Orçamento</h2>
           <p className="text-muted-foreground">Gerir todos os pedidos recebidos</p>
         </div>
-        <Select value={filterStatus} onValueChange={setFilterStatus}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filtrar por estado" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todos</SelectItem>
-            <SelectItem value="pending">Pendentes</SelectItem>
-            <SelectItem value="contacted">Contactados</SelectItem>
-            <SelectItem value="quoted">Orçados</SelectItem>
-            <SelectItem value="completed">Concluídos</SelectItem>
-            <SelectItem value="cancelled">Cancelados</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex items-center gap-2">
+          <Select value={filterStatus} onValueChange={setFilterStatus}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filtrar por estado" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos</SelectItem>
+              <SelectItem value="pending">Pendentes</SelectItem>
+              <SelectItem value="contacted">Contactados</SelectItem>
+              <SelectItem value="quoted">Orçados</SelectItem>
+              <SelectItem value="completed">Concluídos</SelectItem>
+              <SelectItem value="cancelled">Cancelados</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button variant="outline" onClick={exportCSV} className="flex items-center gap-2">
+            <Download className="h-4 w-4" />
+            <span className="hidden sm:inline">Exportar CSV</span>
+          </Button>
+        </div>
       </div>
 
       {loading ? (

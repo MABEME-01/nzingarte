@@ -43,21 +43,21 @@ const Header = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-md border-b border-border">
+    <header className="sticky top-0 z-50 w-full bg-[hsl(var(--header-bg))] shadow-lg">
       <div className="container mx-auto px-4">
-        <div className="flex h-20 items-center justify-between">
+        <div className="flex h-14 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
             <img
               src={logoNzinga}
               alt="NZINGA'RTE Logo"
-              className="h-12 w-auto object-contain"
+              className="h-10 w-auto object-contain"
             />
             <div className="hidden sm:block">
-              <h1 className="font-display text-xl font-bold text-foreground">
+              <h1 className="font-display text-lg font-bold text-[hsl(var(--header-foreground))]">
                 NZINGA'RTE
               </h1>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-[hsl(var(--header-foreground))]/70">
                 Fazer bem, faz bem
               </p>
             </div>
@@ -69,10 +69,10 @@ const Header = () => {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                   isActive(link.path)
                     ? "bg-primary text-primary-foreground"
-                    : "text-foreground hover:bg-secondary hover:text-secondary-foreground"
+                    : "text-[hsl(var(--header-foreground))]/90 hover:bg-[hsl(var(--header-foreground))]/10 hover:text-[hsl(var(--header-foreground))]"
                 }`}
               >
                 {link.name}
@@ -81,8 +81,8 @@ const Header = () => {
           </nav>
 
           {/* CTA Buttons */}
-          <div className="hidden lg:flex items-center gap-3">
-            <Button variant="outline" size="sm" asChild>
+          <div className="hidden lg:flex items-center gap-2">
+            <Button variant="outline" size="sm" asChild className="border-[hsl(var(--header-foreground))]/30 text-[hsl(var(--header-foreground))] hover:bg-[hsl(var(--header-foreground))]/10 hover:text-[hsl(var(--header-foreground))]">
               <a
                 href="https://wa.me/244936163587"
                 target="_blank"
@@ -97,12 +97,12 @@ const Header = () => {
               <Link to="/contactos">Pedir Orçamento</Link>
             </Button>
             {user ? (
-              <Button variant="ghost" size="sm" onClick={handleLogout} className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" onClick={handleLogout} className="flex items-center gap-2 text-[hsl(var(--header-foreground))]/90 hover:bg-[hsl(var(--header-foreground))]/10 hover:text-[hsl(var(--header-foreground))]">
                 <LogOut className="h-4 w-4" />
                 Sair
               </Button>
             ) : (
-              <Button variant="ghost" size="sm" asChild>
+              <Button variant="ghost" size="sm" asChild className="text-[hsl(var(--header-foreground))]/90 hover:bg-[hsl(var(--header-foreground))]/10 hover:text-[hsl(var(--header-foreground))]">
                 <Link to="/auth" className="flex items-center gap-2">
                   <User className="h-4 w-4" />
                   Entrar
@@ -113,38 +113,38 @@ const Header = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className="lg:hidden p-2 rounded-lg hover:bg-secondary transition-colors"
+            className="lg:hidden p-2 rounded-lg hover:bg-[hsl(var(--header-foreground))]/10 transition-colors"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label="Toggle menu"
           >
             {isMenuOpen ? (
-              <X className="h-6 w-6 text-foreground" />
+              <X className="h-5 w-5 text-[hsl(var(--header-foreground))]" />
             ) : (
-              <Menu className="h-6 w-6 text-foreground" />
+              <Menu className="h-5 w-5 text-[hsl(var(--header-foreground))]" />
             )}
           </button>
         </div>
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-border animate-fade-in">
-            <nav className="flex flex-col gap-2">
+          <div className="lg:hidden py-3 border-t border-[hsl(var(--header-foreground))]/20 animate-fade-in">
+            <nav className="flex flex-col gap-1">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`px-4 py-3 rounded-lg text-sm font-medium transition-all ${
+                  className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
                     isActive(link.path)
                       ? "bg-primary text-primary-foreground"
-                      : "text-foreground hover:bg-secondary"
+                      : "text-[hsl(var(--header-foreground))]/90 hover:bg-[hsl(var(--header-foreground))]/10"
                   }`}
                 >
                   {link.name}
                 </Link>
               ))}
-              <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-border">
-                <Button variant="outline" asChild>
+              <div className="flex flex-col gap-2 mt-3 pt-3 border-t border-[hsl(var(--header-foreground))]/20">
+                <Button variant="outline" asChild className="border-[hsl(var(--header-foreground))]/30 text-[hsl(var(--header-foreground))] hover:bg-[hsl(var(--header-foreground))]/10">
                   <a
                     href="https://wa.me/244936163587"
                     target="_blank"
@@ -161,12 +161,12 @@ const Header = () => {
                   </Link>
                 </Button>
                 {user ? (
-                  <Button variant="ghost" onClick={handleLogout} className="flex items-center justify-center gap-2">
+                  <Button variant="ghost" onClick={handleLogout} className="flex items-center justify-center gap-2 text-[hsl(var(--header-foreground))]/90 hover:bg-[hsl(var(--header-foreground))]/10">
                     <LogOut className="h-4 w-4" />
                     Sair
                   </Button>
                 ) : (
-                  <Button variant="ghost" asChild>
+                  <Button variant="ghost" asChild className="text-[hsl(var(--header-foreground))]/90 hover:bg-[hsl(var(--header-foreground))]/10">
                     <Link to="/auth" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-center gap-2">
                       <User className="h-4 w-4" />
                       Entrar
