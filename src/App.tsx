@@ -11,6 +11,7 @@ import Portfolio from "./pages/Portfolio";
 import Cursos from "./pages/Cursos";
 import Contactos from "./pages/Contactos";
 import Auth from "./pages/Auth";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/cursos" element={<Cursos />} />
           <Route path="/contactos" element={<Contactos />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
