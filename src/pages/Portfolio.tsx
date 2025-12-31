@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import AnimatedSection from "@/components/ui/AnimatedSection";
+import Lightbox from "@/components/ui/Lightbox";
 import { cn } from "@/lib/utils";
 import portfolio1 from "@/assets/portfolio-1.jpg";
 import portfolio2 from "@/assets/portfolio-2.jpg";
@@ -33,6 +34,8 @@ const portfolioItems = [
 
 const Portfolio = () => {
   const [activeCategory, setActiveCategory] = useState("todos");
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   const filteredItems = activeCategory === "todos" 
     ? portfolioItems 
@@ -41,6 +44,16 @@ const Portfolio = () => {
   const getCategoryName = (categoryId: string) => {
     return categories.find(c => c.id === categoryId)?.name || categoryId;
   };
+
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
+
+  const lightboxImages = filteredItems.map(item => ({
+    src: item.image,
+    title: item.title,
+  }));
 
   return (
     <Layout>
@@ -61,7 +74,7 @@ const Portfolio = () => {
       </section>
 
       {/* Filters */}
-      <section className="py-8 bg-background border-b border-border sticky top-16 z-30">
+      <section className="py-8 bg-background border-b border-border sticky top-14 z-30">
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap justify-center gap-2">
             {categories.map((category) => (
@@ -92,11 +105,15 @@ const Portfolio = () => {
                 animation="scale-in"
                 delay={index * 50}
               >
-                <div className="group relative aspect-square rounded-2xl overflow-hidden cursor-pointer">
+                <div 
+                  className="group relative aspect-square rounded-2xl overflow-hidden cursor-pointer"
+                  onClick={() => openLightbox(index)}
+                >
                   <img 
                     src={item.image} 
                     alt={item.title} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
                   <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
@@ -119,6 +136,15 @@ const Portfolio = () => {
           )}
         </div>
       </section>
+
+      <Lightbox
+        images={lightboxImages}
+        currentIndex={lightboxIndex}
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        onNext={() => setLightboxIndex((prev) => (prev + 1) % lightboxImages.length)}
+        onPrev={() => setLightboxIndex((prev) => (prev - 1 + lightboxImages.length) % lightboxImages.length)}
+      />
     </Layout>
   );
 };
