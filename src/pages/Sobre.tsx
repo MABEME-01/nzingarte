@@ -1,8 +1,30 @@
+import { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import AnimatedSection from "@/components/ui/AnimatedSection";
-import { CheckCircle, Target, Eye, Heart, Award, Users, Clock, MapPin } from "lucide-react";
-import portfolio2 from "@/assets/portfolio-2.jpg";
+import Lightbox from "@/components/ui/Lightbox";
+import { CheckCircle, Target, Eye, Heart, Award, Users, Clock, MapPin, Camera } from "lucide-react";
 import portfolio1 from "@/assets/portfolio-1.jpg";
+import portfolio2 from "@/assets/portfolio-2.jpg";
+import portfolio3 from "@/assets/portfolio-3.jpg";
+import portfolio4 from "@/assets/portfolio-4.jpg";
+import cozinhaAmericana from "@/assets/services/cozinha-americana.jpg";
+import divisorias from "@/assets/services/divisorias.jpg";
+import espelhosParede from "@/assets/services/espelho-parede.jpg";
+import estantes from "@/assets/services/estantes.jpg";
+import estuque from "@/assets/services/estuque.jpg";
+import garrafeira from "@/assets/services/garrafeira.jpg";
+import guardaRoupa from "@/assets/services/guarda-roupa.jpg";
+import ladrilho from "@/assets/services/ladrilho.jpg";
+import painelTv from "@/assets/services/painel-tv.jpg";
+import papelParede from "@/assets/services/papel-parede.jpg";
+import papelVinilico from "@/assets/services/papel-vinilico.jpg";
+import pedrasNaturais from "@/assets/services/pedras-naturais.jpg";
+import pintura from "@/assets/services/pintura.jpg";
+import placas3d from "@/assets/services/placas-3d.jpg";
+import pladur from "@/assets/services/pladur.jpg";
+import sanitasLavatorios from "@/assets/services/sanitas-lavatorios.jpg";
+import sapateiras from "@/assets/services/sapateiras.jpg";
+import tectoFalso from "@/assets/services/tecto-falso.jpg";
 
 const valores = [
   "Qualidade em cada detalhe",
@@ -13,7 +35,40 @@ const valores = [
   "Inovação constante",
 ];
 
+const galeriaTrabalhos = [
+  { src: portfolio1, title: "Projecto Residencial" },
+  { src: portfolio2, title: "Decoração Interior" },
+  { src: portfolio3, title: "Renovação Completa" },
+  { src: portfolio4, title: "Design Moderno" },
+  { src: cozinhaAmericana, title: "Cozinha Americana" },
+  { src: divisorias, title: "Divisórias" },
+  { src: espelhosParede, title: "Espelhos de Parede" },
+  { src: estantes, title: "Estantes Personalizadas" },
+  { src: estuque, title: "Estuque Decorativo" },
+  { src: garrafeira, title: "Garrafeira" },
+  { src: guardaRoupa, title: "Guarda-Roupa" },
+  { src: ladrilho, title: "Ladrilho" },
+  { src: painelTv, title: "Painel de TV" },
+  { src: papelParede, title: "Papel de Parede" },
+  { src: papelVinilico, title: "Papel Vinílico" },
+  { src: pedrasNaturais, title: "Pedras Naturais" },
+  { src: pintura, title: "Pintura Decorativa" },
+  { src: placas3d, title: "Placas 3D" },
+  { src: pladur, title: "Pladur" },
+  { src: sanitasLavatorios, title: "Sanitas e Lavatórios" },
+  { src: sapateiras, title: "Sapateiras" },
+  { src: tectoFalso, title: "Tecto Falso" },
+];
+
 const Sobre = () => {
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const openLightbox = (index: number) => {
+    setCurrentImageIndex(index);
+    setLightboxOpen(true);
+  };
+
   return (
     <Layout>
       {/* Hero Section */}
@@ -183,6 +238,54 @@ const Sobre = () => {
           </div>
         </div>
       </section>
+
+      {/* Gallery Section */}
+      <section className="py-20 bg-secondary/30">
+        <div className="container mx-auto px-4">
+          <AnimatedSection animation="fade-in-up" className="text-center mb-12">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <Camera className="h-8 w-8 text-primary" />
+              <span className="text-primary font-medium text-sm uppercase tracking-wider">Os Nossos Trabalhos</span>
+            </div>
+            <h2 className="font-display text-3xl lg:text-4xl font-bold text-foreground">Galeria de Projectos</h2>
+            <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
+              Conheça alguns dos nossos trabalhos realizados. Cada projecto reflete o nosso compromisso com a qualidade e atenção aos detalhes.
+            </p>
+          </AnimatedSection>
+          
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {galeriaTrabalhos.map((item, index) => (
+              <AnimatedSection key={index} animation="fade-in-up" delay={index * 30}>
+                <div 
+                  className="relative aspect-square rounded-xl overflow-hidden cursor-pointer group shadow-md hover:shadow-elegant transition-all duration-300"
+                  onClick={() => openLightbox(index)}
+                >
+                  <img 
+                    src={item.src} 
+                    alt={item.title} 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <p className="text-white font-medium text-sm">{item.title}</p>
+                    </div>
+                  </div>
+                  <div className="absolute inset-0 border-2 border-primary/0 group-hover:border-primary/50 rounded-xl transition-colors duration-300" />
+                </div>
+              </AnimatedSection>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <Lightbox
+        images={galeriaTrabalhos}
+        currentIndex={currentImageIndex}
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        onNext={() => setCurrentImageIndex((prev) => (prev + 1) % galeriaTrabalhos.length)}
+        onPrev={() => setCurrentImageIndex((prev) => (prev - 1 + galeriaTrabalhos.length) % galeriaTrabalhos.length)}
+      />
     </Layout>
   );
 };
