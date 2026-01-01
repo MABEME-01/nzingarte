@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, Phone, User, LogOut } from "lucide-react";
+import { Menu, X, Phone, User, LogOut, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
@@ -18,6 +18,7 @@ const navLinks = [
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -25,15 +26,34 @@ const Header = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setUser(session?.user ?? null);
+        // Check admin role when user changes
+        if (session?.user) {
+          setTimeout(() => {
+            checkAdminRole(session.user.id);
+          }, 0);
+        } else {
+          setIsAdmin(false);
+        }
       }
     );
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
+      if (session?.user) {
+        checkAdminRole(session.user.id);
+      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
+
+  const checkAdminRole = async (userId: string) => {
+    const { data: hasRole } = await supabase.rpc("has_role", {
+      _user_id: userId,
+      _role: "admin",
+    });
+    setIsAdmin(!!hasRole);
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -97,10 +117,20 @@ const Header = () => {
               <Link to="/contactos">Pedir Orçamento</Link>
             </Button>
             {user ? (
-              <Button variant="ghost" size="sm" onClick={handleLogout} className="flex items-center gap-2 text-[hsl(var(--header-foreground))]/90 hover:bg-[hsl(var(--header-foreground))]/10 hover:text-[hsl(var(--header-foreground))]">
-                <LogOut className="h-4 w-4" />
-                Sair
-              </Button>
+              <>
+                {isAdmin && (
+                  <Button variant="ghost" size="sm" asChild className="text-[hsl(var(--header-foreground))]/90 hover:bg-[hsl(var(--header-foreground))]/10 hover:text-[hsl(var(--header-foreground))]">
+                    <Link to="/admin" className="flex items-center gap-2">
+                      <Settings className="h-4 w-4" />
+                      Admin
+                    </Link>
+                  </Button>
+                )}
+                <Button variant="ghost" size="sm" onClick={handleLogout} className="flex items-center gap-2 text-[hsl(var(--header-foreground))]/90 hover:bg-[hsl(var(--header-foreground))]/10 hover:text-[hsl(var(--header-foreground))]">
+                  <LogOut className="h-4 w-4" />
+                  Sair
+                </Button>
+              </>
             ) : (
               <Button variant="ghost" size="sm" asChild className="text-[hsl(var(--header-foreground))]/90 hover:bg-[hsl(var(--header-foreground))]/10 hover:text-[hsl(var(--header-foreground))]">
                 <Link to="/auth" className="flex items-center gap-2">
@@ -161,10 +191,20 @@ const Header = () => {
                   </Link>
                 </Button>
                 {user ? (
-                  <Button variant="ghost" onClick={handleLogout} className="flex items-center justify-center gap-2 text-[hsl(var(--header-foreground))]/90 hover:bg-[hsl(var(--header-foreground))]/10">
-                    <LogOut className="h-4 w-4" />
-                    Sair
-                  </Button>
+                  <>
+                    {isAdmin && (
+                      <Button variant="ghost" asChild className="text-[hsl(var(--header-foreground))]/90 hover:bg-[hsl(var(--header-foreground))]/10">
+                        <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-center gap-2">
+                          <Settings className="h-4 w-4" />
+                          Painel Admin
+                        </Link>
+                      </Button>
+                    )}
+                    <Button variant="ghost" onClick={handleLogout} className="flex items-center justify-center gap-2 text-[hsl(var(--header-foreground))]/90 hover:bg-[hsl(var(--header-foreground))]/10">
+                      <LogOut className="h-4 w-4" />
+                      Sair
+                    </Button>
+                  </>
                 ) : (
                   <Button variant="ghost" asChild className="text-[hsl(var(--header-foreground))]/90 hover:bg-[hsl(var(--header-foreground))]/10">
                     <Link to="/auth" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-center gap-2">
