@@ -4,7 +4,7 @@ import { Menu, X, Phone, User, LogOut, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
-import logoNzinga from "@/assets/logo-nzinga.png";
+import logoNzinga from "@/assets/logo-nzinga-novo.png";
 
 const navLinks = [
   { name: "Início", path: "/" },
