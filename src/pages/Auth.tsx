@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, CheckCircle } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, CheckCircle, Shield } from "lucide-react";
 import { z } from "zod";
 
 const loginSchema = z.object({
@@ -27,6 +27,7 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [adminCode, setAdminCode] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -163,6 +164,7 @@ const Auth = () => {
         emailRedirectTo: redirectUrl,
         data: {
           full_name: fullName,
+          admin_code: adminCode,
         },
       },
     });
@@ -423,6 +425,23 @@ const Auth = () => {
                 <p className="text-sm text-destructive">{errors.password}</p>
               )}
             </div>
+
+            {!isLogin && (
+              <div className="space-y-2">
+                <Label htmlFor="adminCode">Código de Administrador (opcional)</Label>
+                <div className="relative">
+                  <Shield className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="adminCode"
+                    type="text"
+                    placeholder="Código de administrador"
+                    value={adminCode}
+                    onChange={(e) => setAdminCode(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+            )}
 
             {isLogin && (
               <div className="text-right">
