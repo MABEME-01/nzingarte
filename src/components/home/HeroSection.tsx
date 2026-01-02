@@ -15,7 +15,7 @@ const HeroSection = () => {
       <div className="container mx-auto px-4 py-12 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Text Content */}
-          <div className="space-y-8 animate-fade-in">
+          <div className="space-y-8 animate-fade-in text-center lg:text-left">
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium">
               <Star className="h-4 w-4 fill-current" />
