@@ -3,33 +3,67 @@ import Layout from "@/components/layout/Layout";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import Lightbox from "@/components/ui/Lightbox";
 import { cn } from "@/lib/utils";
-import portfolio1 from "@/assets/portfolio-1.jpg";
-import portfolio2 from "@/assets/portfolio-2.jpg";
-import portfolio3 from "@/assets/portfolio-3.jpg";
-import portfolio4 from "@/assets/portfolio-4.jpg";
+
+// Import all service images
+import pladur from "@/assets/services/pladur.jpg";
+import estuque from "@/assets/services/estuque.jpg";
+import pintura from "@/assets/services/pintura.jpg";
+import ladrilho from "@/assets/services/ladrilho.jpg";
+import tectoFalso from "@/assets/services/tecto-falso.jpg";
+import papelParede from "@/assets/services/papel-parede.jpg";
+import cozinhaAmericana from "@/assets/services/cozinha-americana.jpg";
+import painelTv from "@/assets/services/painel-tv.jpg";
+import guardaRoupa from "@/assets/services/guarda-roupa.jpg";
+import garrafeira from "@/assets/services/garrafeira.jpg";
+import papelVinilico from "@/assets/services/papel-vinilico.jpg";
+import placas3d from "@/assets/services/placas-3d.jpg";
+import divisorias from "@/assets/services/divisorias.jpg";
+import estantes from "@/assets/services/estantes.jpg";
+import sapateiras from "@/assets/services/sapateiras.jpg";
+import pedrasNaturais from "@/assets/services/pedras-naturais.jpg";
+import espelhoParede from "@/assets/services/espelho-parede.jpg";
+import sanitasLavatorios from "@/assets/services/sanitas-lavatorios.jpg";
 
 const categories = [
   { id: "todos", name: "Todos" },
-  { id: "decoracao", name: "Decoração Interior" },
-  { id: "tecto", name: "Tecto Falso" },
-  { id: "cozinha", name: "Cozinha" },
-  { id: "painel", name: "Painel TV" },
-  { id: "pladur", name: "Pladur" },
+  { id: "acabamentos", name: "Acabamentos" },
+  { id: "tectos", name: "Tectos" },
+  { id: "cozinhas", name: "Cozinhas" },
+  { id: "mobiliario", name: "Mobiliário" },
+  { id: "paredes", name: "Paredes" },
+  { id: "casasbanho", name: "Casas de Banho" },
 ];
 
 const portfolioItems = [
-  { id: 1, image: portfolio1, title: "Sala de Estar Moderna", category: "decoracao" },
-  { id: 2, image: portfolio2, title: "Tecto Falso com LED", category: "tecto" },
-  { id: 3, image: portfolio3, title: "Cozinha Americana", category: "cozinha" },
-  { id: 4, image: portfolio4, title: "Painel de TV", category: "painel" },
-  { id: 5, image: portfolio1, title: "Divisória em Pladur", category: "pladur" },
-  { id: 6, image: portfolio2, title: "Tecto Decorativo", category: "tecto" },
-  { id: 7, image: portfolio3, title: "Cozinha Integrada", category: "cozinha" },
-  { id: 8, image: portfolio4, title: "Painel Moderno", category: "painel" },
-  { id: 9, image: portfolio1, title: "Acabamento Premium", category: "decoracao" },
-  { id: 10, image: portfolio2, title: "Iluminação Embutida", category: "tecto" },
-  { id: 11, image: portfolio3, title: "Bancada Americana", category: "cozinha" },
-  { id: 12, image: portfolio4, title: "Estante Planejada", category: "pladur" },
+  // Acabamentos
+  { id: 1, image: pladur, title: "Acabamento em Pladur", category: "acabamentos" },
+  { id: 2, image: estuque, title: "Estuque Decorativo", category: "acabamentos" },
+  { id: 3, image: pintura, title: "Pintura Profissional", category: "acabamentos" },
+  { id: 4, image: ladrilho, title: "Ladrilho Moderno", category: "acabamentos" },
+  
+  // Tectos
+  { id: 5, image: tectoFalso, title: "Tecto Falso com LED", category: "tectos" },
+  
+  // Paredes
+  { id: 6, image: papelParede, title: "Papel de Parede", category: "paredes" },
+  { id: 7, image: papelVinilico, title: "Papel Vinílico", category: "paredes" },
+  { id: 8, image: placas3d, title: "Placas 3D Decorativas", category: "paredes" },
+  { id: 9, image: pedrasNaturais, title: "Pedras Naturais", category: "paredes" },
+  { id: 10, image: espelhoParede, title: "Espelho de Parede", category: "paredes" },
+  
+  // Cozinhas
+  { id: 11, image: cozinhaAmericana, title: "Cozinha Americana", category: "cozinhas" },
+  
+  // Mobiliário
+  { id: 12, image: painelTv, title: "Painel de TV", category: "mobiliario" },
+  { id: 13, image: guardaRoupa, title: "Guarda-Roupa Planejado", category: "mobiliario" },
+  { id: 14, image: garrafeira, title: "Garrafeira", category: "mobiliario" },
+  { id: 15, image: divisorias, title: "Divisórias", category: "mobiliario" },
+  { id: 16, image: estantes, title: "Estantes Planejadas", category: "mobiliario" },
+  { id: 17, image: sapateiras, title: "Sapateiras", category: "mobiliario" },
+  
+  // Casas de Banho
+  { id: 18, image: sanitasLavatorios, title: "Sanitas e Lavatórios", category: "casasbanho" },
 ];
 
 const Portfolio = () => {

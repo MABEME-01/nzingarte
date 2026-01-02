@@ -8,10 +8,7 @@ import logoNzinga from "@/assets/logo-nzinga.png";
 
 const navLinks = [
   { name: "Início", path: "/" },
-  { name: "Sobre Nós", path: "/sobre" },
-  { name: "Serviços", path: "/servicos" },
   { name: "Portfólio", path: "/portfolio" },
-  { name: "Cursos", path: "/cursos" },
   { name: "Contactos", path: "/contactos" },
 ];
 
@@ -102,7 +99,7 @@ const Header = () => {
 
           {/* CTA Buttons */}
           <div className="hidden lg:flex items-center gap-2">
-            <Button variant="outline" size="sm" asChild className="border-[hsl(var(--header-foreground))]/30 text-[hsl(var(--header-foreground))] hover:bg-[hsl(var(--header-foreground))]/10 hover:text-[hsl(var(--header-foreground))]">
+            <Button size="sm" asChild className="bg-[#25D366] hover:bg-[#20bd5a] text-white border-none">
               <a
                 href="https://wa.me/244936163587"
                 target="_blank"
@@ -174,7 +171,7 @@ const Header = () => {
                 </Link>
               ))}
               <div className="flex flex-col gap-2 mt-3 pt-3 border-t border-[hsl(var(--header-foreground))]/20">
-                <Button variant="outline" asChild className="border-[hsl(var(--header-foreground))]/30 text-[hsl(var(--header-foreground))] hover:bg-[hsl(var(--header-foreground))]/10">
+                <Button asChild className="bg-[#25D366] hover:bg-[#20bd5a] text-white border-none">
                   <a
                     href="https://wa.me/244936163587"
                     target="_blank"
