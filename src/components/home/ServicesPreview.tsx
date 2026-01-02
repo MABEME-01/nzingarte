@@ -40,7 +40,7 @@ const ServicesPreview = () => {
 
         {/* View All Button */}
         <div className="text-center">
-          <Button variant="outline" size="lg" className="group" asChild>
+          <Button size="lg" className="group bg-[#C9A456] hover:bg-[#B8944A] text-white border-none" asChild>
             <Link to="/servicos">
               Ver Todos os Serviços
               <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />

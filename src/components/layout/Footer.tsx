@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Phone, Mail, MapPin, Facebook, Instagram } from "lucide-react";
-import logoNzinga from "@/assets/logo-nzinga.png";
+import logoNzinga from "@/assets/logo-nzinga-novo.png";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();

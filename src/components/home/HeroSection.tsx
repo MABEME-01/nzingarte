@@ -53,22 +53,22 @@ const HeroSection = () => {
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-4">
-              <Button size="lg" className="group" asChild>
+            <div className="flex flex-row gap-3 sm:gap-4">
+              <Button size="lg" className="group text-sm sm:text-base px-4 sm:px-6" asChild>
                 <Link to="/contactos">
                   Solicitar Orçamento
-                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="ml-1 sm:ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
-              <Button size="lg" asChild className="bg-[#25D366] hover:bg-[#20bd5a] text-white border-none">
+              <Button size="lg" asChild className="bg-[#25D366] hover:bg-[#20bd5a] text-white border-none text-sm sm:text-base px-4 sm:px-6">
                 <a
                   href="https://wa.me/244936163587"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-1 sm:gap-2"
                 >
-                  <Phone className="h-5 w-5" />
-                  Falar no WhatsApp
+                  <Phone className="h-4 w-4 sm:h-5 sm:w-5" />
+                  WhatsApp
                 </a>
               </Button>
             </div>
