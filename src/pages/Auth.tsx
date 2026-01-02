@@ -18,6 +18,7 @@ const signupSchema = z.object({
   fullName: z.string().trim().min(2, { message: "Nome deve ter pelo menos 2 caracteres" }).max(100),
   email: z.string().trim().email({ message: "Email inválido" }).max(255),
   password: z.string().min(6, { message: "A senha deve ter pelo menos 6 caracteres" }),
+  adminCode: z.string().min(1, { message: "O código de administrador é obrigatório" }),
 });
 
 type AuthView = 'login' | 'signup' | 'confirm-email' | 'forgot-password';
@@ -60,7 +61,7 @@ const Auth = () => {
       if (view === 'login') {
         loginSchema.parse({ email, password });
       } else if (view === 'signup') {
-        signupSchema.parse({ fullName, email, password });
+        signupSchema.parse({ fullName, email, password, adminCode });
       } else if (view === 'forgot-password') {
         z.string().trim().email({ message: "Email inválido" }).parse(email);
       }
@@ -153,6 +154,18 @@ const Auth = () => {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
+
+    // Verificar código de admin no cliente antes de prosseguir
+    const validAdminCode = "saMueL-587";
+    if (adminCode !== validAdminCode) {
+      toast({
+        title: "Código inválido",
+        description: "O código de administrador não é válido. Apenas administradores podem criar contas.",
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
 
     setLoading(true);
     const redirectUrl = `${window.location.origin}/auth`;
@@ -358,7 +371,7 @@ const Auth = () => {
           <CardDescription>
             {isLogin
               ? "Entre na sua conta para continuar"
-              : "Crie a sua conta para começar"}
+              : "Registo exclusivo para administradores"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -428,18 +441,25 @@ const Auth = () => {
 
             {!isLogin && (
               <div className="space-y-2">
-                <Label htmlFor="adminCode">Código de Administrador (opcional)</Label>
+                <Label htmlFor="adminCode">Código de Administrador *</Label>
                 <div className="relative">
                   <Shield className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="adminCode"
-                    type="text"
+                    type="password"
                     placeholder="Código de administrador"
                     value={adminCode}
                     onChange={(e) => setAdminCode(e.target.value)}
                     className="pl-10"
+                    required
                   />
                 </div>
+                {errors.adminCode && (
+                  <p className="text-sm text-destructive">{errors.adminCode}</p>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  Apenas administradores com código válido podem criar contas.
+                </p>
               </div>
             )}
 

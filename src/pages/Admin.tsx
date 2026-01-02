@@ -4,11 +4,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { LogOut, LayoutDashboard, FileText, Image, Settings } from "lucide-react";
+import { LogOut, LayoutDashboard, FileText, Image, Megaphone, ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import AdminQuotes from "@/components/admin/AdminQuotes";
 import AdminPortfolio from "@/components/admin/AdminPortfolio";
 import AdminStats from "@/components/admin/AdminStats";
+import AdminAds from "@/components/admin/AdminAds";
+import AdminImages from "@/components/admin/AdminImages";
 import logoNzinga from "@/assets/logo-nzinga.png";
 
 const Admin = () => {
@@ -94,7 +96,7 @@ const Admin = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="grid grid-cols-3 w-full max-w-md">
+          <TabsList className="grid grid-cols-5 w-full max-w-2xl">
             <TabsTrigger value="dashboard" className="flex items-center gap-2">
               <LayoutDashboard className="h-4 w-4" />
               <span className="hidden sm:inline">Dashboard</span>
@@ -106,6 +108,14 @@ const Admin = () => {
             <TabsTrigger value="portfolio" className="flex items-center gap-2">
               <Image className="h-4 w-4" />
               <span className="hidden sm:inline">Portfólio</span>
+            </TabsTrigger>
+            <TabsTrigger value="ads" className="flex items-center gap-2">
+              <Megaphone className="h-4 w-4" />
+              <span className="hidden sm:inline">Anúncios</span>
+            </TabsTrigger>
+            <TabsTrigger value="images" className="flex items-center gap-2">
+              <ImageIcon className="h-4 w-4" />
+              <span className="hidden sm:inline">Imagens</span>
             </TabsTrigger>
           </TabsList>
 
@@ -119,6 +129,14 @@ const Admin = () => {
 
           <TabsContent value="portfolio">
             <AdminPortfolio />
+          </TabsContent>
+
+          <TabsContent value="ads">
+            <AdminAds />
+          </TabsContent>
+
+          <TabsContent value="images">
+            <AdminImages />
           </TabsContent>
         </Tabs>
       </main>
