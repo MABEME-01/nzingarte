@@ -8,7 +8,7 @@ const Footer = () => {
   return (
     <footer className="bg-foreground text-background">
       <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
@@ -28,111 +28,6 @@ const Footer = () => {
             </p>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h4 className="font-display text-lg font-semibold mb-4">
-              Links Rápidos
-            </h4>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  to="/"
-                  className="text-sm opacity-80 hover:opacity-100 transition-opacity"
-                >
-                  Início
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/sobre"
-                  className="text-sm opacity-80 hover:opacity-100 transition-opacity"
-                >
-                  Sobre Nós
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/servicos"
-                  className="text-sm opacity-80 hover:opacity-100 transition-opacity"
-                >
-                  Serviços
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/portfolio"
-                  className="text-sm opacity-80 hover:opacity-100 transition-opacity"
-                >
-                  Portfólio
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/cursos"
-                  className="text-sm opacity-80 hover:opacity-100 transition-opacity"
-                >
-                  Cursos
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/contactos"
-                  className="text-sm opacity-80 hover:opacity-100 transition-opacity"
-                >
-                  Contactos
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Services */}
-          <div>
-            <h4 className="font-display text-lg font-semibold mb-4">
-              Serviços Populares
-            </h4>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  to="/servicos/pladur"
-                  className="text-sm opacity-80 hover:opacity-100 transition-opacity"
-                >
-                  Pladur
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/servicos/tecto-falso"
-                  className="text-sm opacity-80 hover:opacity-100 transition-opacity"
-                >
-                  Tecto Falso
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/servicos/pintura"
-                  className="text-sm opacity-80 hover:opacity-100 transition-opacity"
-                >
-                  Pintura
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/servicos/cozinha-americana"
-                  className="text-sm opacity-80 hover:opacity-100 transition-opacity"
-                >
-                  Cozinha Americana
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/servicos/painel-tv"
-                  className="text-sm opacity-80 hover:opacity-100 transition-opacity"
-                >
-                  Painel de TV
-                </Link>
-              </li>
-            </ul>
-          </div>
 
           {/* Contact */}
           <div>
