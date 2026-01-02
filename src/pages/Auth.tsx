@@ -6,23 +6,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Eye, EyeOff, Mail, Lock, User } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, CheckCircle } from "lucide-react";
 import { z } from "zod";
-import logoText from "@/assets/logo-nzinga-text.png";
 
 const loginSchema = z.object({
-  email: z.string().email("Email inválido"),
-  password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
+  email: z.string().trim().email({ message: "Email inválido" }).max(255),
+  password: z.string().min(6, { message: "A senha deve ter pelo menos 6 caracteres" }),
 });
 
 const signupSchema = z.object({
-  fullName: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
-  email: z.string().email("Email inválido"),
-  password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
+  fullName: z.string().trim().min(2, { message: "Nome deve ter pelo menos 2 caracteres" }).max(100),
+  email: z.string().trim().email({ message: "Email inválido" }).max(255),
+  password: z.string().min(6, { message: "A senha deve ter pelo menos 6 caracteres" }),
 });
 
+type AuthView = 'login' | 'signup' | 'confirm-email' | 'forgot-password';
+
 const Auth = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const [view, setView] = useState<AuthView>('login');
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -36,14 +37,14 @@ const Auth = () => {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        if (session?.user) {
+        if (session) {
           navigate("/");
         }
       }
     );
 
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
+      if (session) {
         navigate("/");
       }
     });
@@ -53,20 +54,22 @@ const Auth = () => {
 
   const validateForm = () => {
     setErrors({});
+    
     try {
-      if (isLogin) {
+      if (view === 'login') {
         loginSchema.parse({ email, password });
-      } else {
+      } else if (view === 'signup') {
         signupSchema.parse({ fullName, email, password });
+      } else if (view === 'forgot-password') {
+        z.string().trim().email({ message: "Email inválido" }).parse(email);
       }
       return true;
     } catch (error) {
       if (error instanceof z.ZodError) {
         const newErrors: Record<string, string> = {};
         error.errors.forEach((err) => {
-          if (err.path[0]) {
-            newErrors[err.path[0].toString()] = err.message;
-          }
+          const path = err.path[0] as string;
+          newErrors[path] = err.message;
         });
         setErrors(newErrors);
       }
@@ -104,7 +107,6 @@ const Auth = () => {
         title: "Email enviado!",
         description: "Verifique a sua caixa de entrada e pasta de spam.",
       });
-      setShowResendOption(false);
     }
     setLoading(false);
   };
@@ -127,7 +129,7 @@ const Auth = () => {
       if (error.message === "Invalid login credentials") {
         errorMessage = "Email ou senha incorretos";
       } else if (error.message.includes("Email not confirmed")) {
-        errorMessage = "Email não confirmado. Verifique a sua caixa de entrada e clique no link de confirmação.";
+        errorMessage = "Email não confirmado. Verifique a sua caixa de entrada.";
         setShowResendOption(true);
       } else if (error.message.includes("Invalid email")) {
         errorMessage = "Email inválido";
@@ -154,7 +156,7 @@ const Auth = () => {
     setLoading(true);
     const redirectUrl = `${window.location.origin}/auth`;
     
-    const { error } = await supabase.auth.signUp({
+    const { error, data } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -168,23 +170,53 @@ const Auth = () => {
     if (error) {
       let errorMessage = error.message;
       if (error.message.includes("already registered")) {
-        errorMessage = "Este email já está registrado. Tente fazer login.";
+        errorMessage = "Este email já está registado. Tente fazer login.";
       }
       toast({
-        title: "Erro ao registrar",
+        title: "Erro ao criar conta",
         description: errorMessage,
         variant: "destructive",
       });
     } else {
+      if (data.user && !data.session) {
+        setView('confirm-email');
+      } else {
+        toast({
+          title: "Conta criada!",
+          description: "Bem-vindo ao Nzingarte!",
+        });
+      }
+    }
+    setLoading(false);
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth`,
+    });
+
+    if (error) {
       toast({
-        title: "Conta criada!",
-        description: "Verifique seu email para confirmar o registro.",
+        title: "Erro",
+        description: "Não foi possível enviar o email. Tente novamente.",
+        variant: "destructive",
       });
+    } else {
+      toast({
+        title: "Email enviado!",
+        description: "Verifique a sua caixa de entrada para redefinir a senha.",
+      });
+      setView('login');
     }
     setLoading(false);
   };
 
   const handleGoogleLogin = async () => {
+    setLoading(true);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
@@ -195,43 +227,149 @@ const Auth = () => {
     if (error) {
       toast({
         title: "Erro",
-        description: "Não foi possível conectar com o Google",
+        description: "Erro ao conectar com Google",
         variant: "destructive",
       });
+      setLoading(false);
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-elegant border-border/50">
-        <CardHeader className="text-center space-y-4">
-          <img 
-            src={logoText} 
-            alt="NZINGA'RTE" 
-            className="h-12 mx-auto"
-          />
-          <div>
-            <CardTitle className="text-2xl text-foreground">
-              {isLogin ? "Entrar" : "Criar Conta"}
-            </CardTitle>
-            <CardDescription className="text-muted-foreground">
-              {isLogin 
-                ? "Entre na sua conta para continuar" 
-                : "Crie uma conta para aceder a todos os recursos"}
+  if (view === 'confirm-email') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <div className="mx-auto mb-4 w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+              <CheckCircle className="w-8 h-8 text-primary" />
+            </div>
+            <CardTitle className="text-2xl">Confirme o seu email</CardTitle>
+            <CardDescription>
+              Enviámos um email de confirmação para:
             </CardDescription>
-          </div>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="text-center">
+              <p className="font-medium text-lg">{email}</p>
+            </div>
+            
+            <div className="bg-muted/50 p-4 rounded-lg space-y-2">
+              <p className="text-sm text-muted-foreground">
+                📧 Verifique a sua caixa de entrada
+              </p>
+              <p className="text-sm text-muted-foreground">
+                📁 Verifique também a pasta de <strong>Spam/Lixo</strong>
+              </p>
+              <p className="text-sm text-muted-foreground">
+                ⏱️ O email pode demorar alguns minutos
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <Button
+                onClick={handleResendConfirmation}
+                disabled={loading}
+                variant="outline"
+                className="w-full"
+              >
+                {loading ? "A enviar..." : "Reenviar email de confirmação"}
+              </Button>
+              
+              <Button
+                onClick={() => {
+                  setView('login');
+                  setEmail("");
+                  setPassword("");
+                  setFullName("");
+                }}
+                variant="ghost"
+                className="w-full"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Voltar ao Login
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (view === 'forgot-password') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl">Recuperar Senha</CardTitle>
+            <CardDescription>
+              Insira o seu email para receber um link de recuperação
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleForgotPassword} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="seu@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                {errors.email && (
+                  <p className="text-sm text-destructive">{errors.email}</p>
+                )}
+              </div>
+
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "A enviar..." : "Enviar link de recuperação"}
+              </Button>
+
+              <Button
+                type="button"
+                onClick={() => setView('login')}
+                variant="ghost"
+                className="w-full"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Voltar ao Login
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const isLogin = view === 'login';
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl">
+            {isLogin ? "Entrar" : "Criar Conta"}
+          </CardTitle>
+          <CardDescription>
+            {isLogin
+              ? "Entre na sua conta para continuar"
+              : "Crie a sua conta para começar"}
+          </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent>
           <form onSubmit={isLogin ? handleLogin : handleSignup} className="space-y-4">
             {!isLogin && (
               <div className="space-y-2">
-                <Label htmlFor="fullName" className="text-foreground">Nome Completo</Label>
+                <Label htmlFor="fullName">Nome Completo</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="fullName"
                     type="text"
-                    placeholder="Seu nome completo"
+                    placeholder="O seu nome"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     className="pl-10"
@@ -244,7 +382,7 @@ const Auth = () => {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-foreground">Email</Label>
+              <Label htmlFor="email">Email</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -262,7 +400,7 @@ const Auth = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-foreground">Senha</Label>
+              <Label htmlFor="password">Senha</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -276,7 +414,7 @@ const Auth = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -286,17 +424,25 @@ const Auth = () => {
               )}
             </div>
 
-            <Button 
-              type="submit" 
-              className="w-full bg-primary hover:bg-primary/90"
-              disabled={loading}
-            >
-              {loading ? "Aguarde..." : isLogin ? "Entrar" : "Criar Conta"}
+            {isLogin && (
+              <div className="text-right">
+                <button
+                  type="button"
+                  onClick={() => setView('forgot-password')}
+                  className="text-sm text-primary hover:underline"
+                >
+                  Esqueceu a senha?
+                </button>
+              </div>
+            )}
+
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "A processar..." : isLogin ? "Entrar" : "Criar Conta"}
             </Button>
           </form>
 
           {showResendOption && (
-            <div className="text-center p-4 bg-muted/50 rounded-lg">
+            <div className="mt-4 text-center p-4 bg-muted/50 rounded-lg">
               <p className="text-sm text-muted-foreground mb-2">
                 Não recebeu o email de confirmação?
               </p>
@@ -312,54 +458,74 @@ const Auth = () => {
             </div>
           )}
 
-          <div className="relative">
+          <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">ou continue com</span>
+              <span className="bg-card px-2 text-muted-foreground">ou</span>
             </div>
           </div>
 
-          <Button 
-            variant="outline" 
+          <Button
+            type="button"
+            variant="outline"
             className="w-full"
             onClick={handleGoogleLogin}
+            disabled={loading}
           >
             <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
               <path
+                fill="currentColor"
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                fill="#4285F4"
               />
               <path
+                fill="currentColor"
                 d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                fill="#34A853"
               />
               <path
+                fill="currentColor"
                 d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                fill="#FBBC05"
               />
               <path
+                fill="currentColor"
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                fill="#EA4335"
               />
             </svg>
-            Google
+            Continuar com Google
           </Button>
 
-          <p className="text-center text-sm text-muted-foreground">
-            {isLogin ? "Não tem uma conta?" : "Já tem uma conta?"}{" "}
-            <button
-              type="button"
-              onClick={() => {
-                setIsLogin(!isLogin);
-                setErrors({});
-              }}
-              className="text-primary hover:underline font-medium"
-            >
-              {isLogin ? "Criar conta" : "Entrar"}
-            </button>
-          </p>
+          <div className="mt-6 text-center text-sm">
+            {isLogin ? (
+              <p>
+                Não tem conta?{" "}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setView('signup');
+                    setErrors({});
+                  }}
+                  className="text-primary hover:underline font-medium"
+                >
+                  Criar conta
+                </button>
+              </p>
+            ) : (
+              <p>
+                Já tem conta?{" "}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setView('login');
+                    setErrors({});
+                  }}
+                  className="text-primary hover:underline font-medium"
+                >
+                  Entrar
+                </button>
+              </p>
+            )}
+          </div>
         </CardContent>
       </Card>
     </div>
