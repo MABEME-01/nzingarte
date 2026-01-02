@@ -29,6 +29,7 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showResendOption, setShowResendOption] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -73,22 +74,68 @@ const Auth = () => {
     }
   };
 
+  const handleResendConfirmation = async () => {
+    if (!email) {
+      toast({
+        title: "Erro",
+        description: "Por favor, insira o seu email",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email: email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth`,
+      }
+    });
+
+    if (error) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível reenviar o email. Tente novamente mais tarde.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Email enviado!",
+        description: "Verifique a sua caixa de entrada e pasta de spam.",
+      });
+      setShowResendOption(false);
+    }
+    setLoading(false);
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
 
     setLoading(true);
+    setShowResendOption(false);
+    
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (error) {
+      let errorMessage = error.message;
+      
+      if (error.message === "Invalid login credentials") {
+        errorMessage = "Email ou senha incorretos";
+      } else if (error.message.includes("Email not confirmed")) {
+        errorMessage = "Email não confirmado. Verifique a sua caixa de entrada e clique no link de confirmação.";
+        setShowResendOption(true);
+      } else if (error.message.includes("Invalid email")) {
+        errorMessage = "Email inválido";
+      }
+      
       toast({
         title: "Erro ao entrar",
-        description: error.message === "Invalid login credentials" 
-          ? "Email ou senha incorretos" 
-          : error.message,
+        description: errorMessage,
         variant: "destructive",
       });
     } else {
@@ -105,7 +152,7 @@ const Auth = () => {
     if (!validateForm()) return;
 
     setLoading(true);
-    const redirectUrl = `${window.location.origin}/`;
+    const redirectUrl = `${window.location.origin}/auth`;
     
     const { error } = await supabase.auth.signUp({
       email,
@@ -141,7 +188,7 @@ const Auth = () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/`,
+        redirectTo: `${window.location.origin}/auth`,
       },
     });
 
@@ -247,6 +294,23 @@ const Auth = () => {
               {loading ? "Aguarde..." : isLogin ? "Entrar" : "Criar Conta"}
             </Button>
           </form>
+
+          {showResendOption && (
+            <div className="text-center p-4 bg-muted/50 rounded-lg">
+              <p className="text-sm text-muted-foreground mb-2">
+                Não recebeu o email de confirmação?
+              </p>
+              <Button
+                type="button"
+                variant="link"
+                onClick={handleResendConfirmation}
+                disabled={loading}
+                className="text-primary"
+              >
+                Reenviar email de confirmação
+              </Button>
+            </div>
+          )}
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
