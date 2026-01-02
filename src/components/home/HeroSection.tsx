@@ -5,14 +5,14 @@ import portfolio1 from "@/assets/portfolio-1.jpg";
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-gradient-to-br from-secondary via-background to-secondary/50">
+    <section className="relative min-h-[80vh] flex items-center overflow-hidden bg-gradient-to-br from-secondary via-background to-secondary/50">
       {/* Decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-primary/5 blur-3xl" />
         <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-primary/10 blur-3xl" />
       </div>
 
-      <div className="container mx-auto px-4 py-20 relative z-10">
+      <div className="container mx-auto px-4 py-12 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Text Content */}
           <div className="space-y-8 animate-fade-in">
@@ -60,7 +60,7 @@ const HeroSection = () => {
                   <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild>
+              <Button size="lg" asChild className="bg-[#25D366] hover:bg-[#20bd5a] text-white border-none">
                 <a
                   href="https://wa.me/244936163587"
                   target="_blank"
