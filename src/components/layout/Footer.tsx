@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Phone, Mail, MapPin, Facebook, Instagram } from "lucide-react";
-import logoNzinga from "@/assets/logo-nzinga-novo.png";
+import logoNzingaFooter from "@/assets/logo-nzinga-footer.png";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -13,9 +13,9 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <img
-                src={logoNzinga}
+                src={logoNzingaFooter}
                 alt="NZINGA'RTE Logo"
-                className="h-12 w-auto object-contain brightness-0 invert"
+                className="h-16 w-auto object-contain"
               />
               <div>
                 <h3 className="font-display text-xl font-bold">NZINGA'RTE</h3>
