@@ -4,12 +4,40 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Phone, Mail, MapPin, Send } from "lucide-react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Phone, Mail, MapPin, Send, HelpCircle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { services } from "@/data/services";
 import { z } from "zod";
+
+const faqItems = [
+  {
+    pergunta: "Quanto tempo demora a receber um orçamento?",
+    resposta: "Normalmente respondemos em até 24 horas após receber o seu pedido. Para projectos mais complexos, pode demorar até 48 horas para garantir uma proposta detalhada."
+  },
+  {
+    pergunta: "Vocês trabalham fora de Mbanza Kongo?",
+    resposta: "Sim! Atendemos toda a província do Zaire e regiões vizinhas. Para locais mais distantes, incluímos os custos de deslocação no orçamento."
+  },
+  {
+    pergunta: "Qual é o valor mínimo para um serviço?",
+    resposta: "Cada projecto é único e não temos um valor mínimo fixo. Fazemos orçamentos gratuitos e sem compromisso para que possa avaliar a nossa proposta."
+  },
+  {
+    pergunta: "Os materiais estão incluídos no preço?",
+    resposta: "O orçamento pode incluir mão-de-obra e materiais ou apenas mão-de-obra, conforme a sua preferência. Indicamos claramente cada opção na proposta."
+  },
+  {
+    pergunta: "Oferecem garantia nos trabalhos?",
+    resposta: "Sim, todos os nossos trabalhos têm garantia de qualidade. O período de garantia varia conforme o tipo de serviço, sendo comunicado antes do início da obra."
+  },
+  {
+    pergunta: "Como posso acompanhar o progresso do trabalho?",
+    resposta: "Enviamos actualizações regulares por WhatsApp com fotos e vídeos do progresso. Também agendamos visitas presenciais sempre que necessário."
+  }
+];
 
 const quoteSchema = z.object({
   nome: z.string().min(2, "Nome deve ter pelo menos 2 caracteres").max(100),
@@ -257,6 +285,59 @@ const Contactos = () => {
                 Ao enviar, concorda em ser contactado pela NZINGA'RTE.
               </p>
             </form>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-20 bg-secondary/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 text-primary font-medium text-sm uppercase tracking-wider mb-2">
+              <HelpCircle className="h-4 w-4" />
+              <span>Dúvidas</span>
+            </div>
+            <h2 className="font-display text-3xl font-bold text-foreground">
+              Perguntas Frequentes
+            </h2>
+            <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
+              Encontre respostas às questões mais comuns dos nossos clientes.
+            </p>
+          </div>
+
+          <div className="max-w-3xl mx-auto">
+            <Accordion type="single" collapsible className="w-full space-y-4">
+              {faqItems.map((item, index) => (
+                <AccordionItem 
+                  key={index} 
+                  value={`item-${index}`}
+                  className="bg-card border border-border rounded-xl px-6 data-[state=open]:shadow-md transition-shadow"
+                >
+                  <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline py-5">
+                    {item.pergunta}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground pb-5">
+                    {item.resposta}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+
+          <div className="text-center mt-10">
+            <p className="text-muted-foreground mb-4">
+              Não encontrou a sua pergunta?
+            </p>
+            <Button asChild variant="outline">
+              <a
+                href="https://wa.me/244936163587?text=Olá! Tenho uma dúvida sobre os vossos serviços."
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Phone className="mr-2 h-4 w-4" />
+                Fale Connosco
+              </a>
+            </Button>
           </div>
         </div>
       </section>
