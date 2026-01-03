@@ -65,6 +65,7 @@ export type Database = {
           featured: boolean | null
           id: string
           image_url: string
+          media_type: string
           title: string
           updated_at: string
         }
@@ -76,6 +77,7 @@ export type Database = {
           featured?: boolean | null
           id?: string
           image_url: string
+          media_type?: string
           title: string
           updated_at?: string
         }
@@ -87,6 +89,7 @@ export type Database = {
           featured?: boolean | null
           id?: string
           image_url?: string
+          media_type?: string
           title?: string
           updated_at?: string
         }
