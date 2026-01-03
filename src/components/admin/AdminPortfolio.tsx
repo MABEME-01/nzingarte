@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Trash2, Edit, Image, Upload, Star } from "lucide-react";
+import { Plus, Trash2, Edit, Image, Upload, Star, Video, Play } from "lucide-react";
 import { toast } from "sonner";
 
 interface PortfolioItem {
@@ -17,6 +17,7 @@ interface PortfolioItem {
   description: string | null;
   category: string;
   image_url: string;
+  media_type: string;
   featured: boolean;
   display_order: number;
   created_at: string;
@@ -28,6 +29,8 @@ const categories = [
   { id: "tecto-falso", name: "Tecto Falso" },
   { id: "cozinha-americana", name: "Cozinha Americana" },
   { id: "guarda-roupa", name: "Guarda-roupa" },
+  { id: "vasos", name: "Vasos Personalizados" },
+  { id: "artesanato", name: "Artesanato" },
   { id: "outros", name: "Outros" },
 ];
 
@@ -44,6 +47,7 @@ const AdminPortfolio = () => {
     description: "",
     category: "",
     image_url: "",
+    media_type: "image" as "image" | "video",
     featured: false,
   });
 
@@ -67,17 +71,21 @@ const AdminPortfolio = () => {
     fetchItems();
   }, []);
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith("image/")) {
-      toast.error("Por favor, selecione uma imagem");
+    const isVideo = file.type.startsWith("video/");
+    const isImage = file.type.startsWith("image/");
+
+    if (!isVideo && !isImage) {
+      toast.error("Por favor, selecione uma imagem ou vídeo");
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("A imagem deve ter menos de 5MB");
+    const maxSize = isVideo ? 50 * 1024 * 1024 : 5 * 1024 * 1024; // 50MB for video, 5MB for image
+    if (file.size > maxSize) {
+      toast.error(`O ficheiro deve ter menos de ${isVideo ? "50MB" : "5MB"}`);
       return;
     }
 
@@ -93,7 +101,7 @@ const AdminPortfolio = () => {
 
     if (uploadError) {
       console.error("Upload error:", uploadError);
-      toast.error("Erro ao fazer upload da imagem");
+      toast.error("Erro ao fazer upload");
       setUploading(false);
       return;
     }
@@ -102,9 +110,13 @@ const AdminPortfolio = () => {
       .from("portfolio")
       .getPublicUrl(filePath);
 
-    setFormData({ ...formData, image_url: publicUrl });
+    setFormData({ 
+      ...formData, 
+      image_url: publicUrl, 
+      media_type: isVideo ? "video" : "image" 
+    });
     setUploading(false);
-    toast.success("Imagem carregada");
+    toast.success(isVideo ? "Vídeo carregado" : "Imagem carregada");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -123,6 +135,7 @@ const AdminPortfolio = () => {
           description: formData.description || null,
           category: formData.category,
           image_url: formData.image_url,
+          media_type: formData.media_type,
           featured: formData.featured,
         })
         .eq("id", editingItem.id);
@@ -139,6 +152,7 @@ const AdminPortfolio = () => {
         description: formData.description || null,
         category: formData.category,
         image_url: formData.image_url,
+        media_type: formData.media_type,
         featured: formData.featured,
         display_order: items.length,
       });
@@ -199,6 +213,7 @@ const AdminPortfolio = () => {
       description: "",
       category: "",
       image_url: "",
+      media_type: "image",
       featured: false,
     });
     setEditingItem(null);
@@ -211,9 +226,26 @@ const AdminPortfolio = () => {
       description: item.description || "",
       category: item.category,
       image_url: item.image_url,
+      media_type: item.media_type as "image" | "video",
       featured: item.featured,
     });
     setDialogOpen(true);
+  };
+
+  const renderMediaPreview = (url: string, mediaType: string, isCard = false) => {
+    if (mediaType === "video") {
+      return (
+        <video
+          src={url}
+          className="w-full h-full object-cover"
+          autoPlay={isCard}
+          loop={isCard}
+          muted
+          playsInline
+        />
+      );
+    }
+    return <img src={url} alt="Preview" className="w-full h-full object-cover" />;
   };
 
   return (
@@ -221,7 +253,7 @@ const AdminPortfolio = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="font-display text-2xl font-bold text-foreground">Portfólio</h2>
-          <p className="text-muted-foreground">Gerir imagens do portfólio</p>
+          <p className="text-muted-foreground">Gerir imagens e vídeos do portfólio</p>
         </div>
 
         <Dialog open={dialogOpen} onOpenChange={(open) => {
@@ -281,21 +313,32 @@ const AdminPortfolio = () => {
               </div>
 
               <div className="space-y-2">
-                <Label>Imagem *</Label>
+                <Label>Imagem ou Vídeo *</Label>
                 <input
                   type="file"
                   ref={fileInputRef}
-                  onChange={handleImageUpload}
-                  accept="image/*"
+                  onChange={handleMediaUpload}
+                  accept="image/*,video/*"
                   className="hidden"
                 />
                 {formData.image_url ? (
-                  <div className="relative">
-                    <img
-                      src={formData.image_url}
-                      alt="Preview"
-                      className="w-full h-40 object-cover rounded-lg"
-                    />
+                  <div className="relative rounded-lg overflow-hidden">
+                    <div className="h-40">
+                      {renderMediaPreview(formData.image_url, formData.media_type)}
+                    </div>
+                    <div className="absolute top-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs flex items-center gap-1">
+                      {formData.media_type === "video" ? (
+                        <>
+                          <Video className="h-3 w-3" />
+                          Vídeo
+                        </>
+                      ) : (
+                        <>
+                          <Image className="h-3 w-3" />
+                          Imagem
+                        </>
+                      )}
+                    </div>
                     <Button
                       type="button"
                       variant="secondary"
@@ -320,8 +363,12 @@ const AdminPortfolio = () => {
                         <span>A carregar...</span>
                       ) : (
                         <>
-                          <Upload className="h-8 w-8 text-muted-foreground" />
-                          <span className="text-muted-foreground">Clique para carregar</span>
+                          <div className="flex items-center gap-2">
+                            <Upload className="h-6 w-6 text-muted-foreground" />
+                            <Video className="h-6 w-6 text-muted-foreground" />
+                          </div>
+                          <span className="text-muted-foreground">Clique para carregar imagem ou vídeo</span>
+                          <span className="text-xs text-muted-foreground">(Imagem: máx 5MB | Vídeo: máx 50MB)</span>
                         </>
                       )}
                     </div>
@@ -361,11 +408,12 @@ const AdminPortfolio = () => {
           {items.map((item) => (
             <Card key={item.id} className="overflow-hidden group">
               <div className="relative aspect-[4/3]">
-                <img
-                  src={item.image_url}
-                  alt={item.title}
-                  className="w-full h-full object-cover"
-                />
+                {renderMediaPreview(item.image_url, item.media_type, true)}
+                {item.media_type === "video" && (
+                  <div className="absolute top-2 right-2 bg-black/60 text-white p-1.5 rounded-full">
+                    <Play className="h-4 w-4" />
+                  </div>
+                )}
                 {item.featured && (
                   <div className="absolute top-2 left-2 bg-primary text-primary-foreground px-2 py-1 rounded-md text-xs flex items-center gap-1">
                     <Star className="h-3 w-3" />

@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import Layout from "@/components/layout/Layout";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import Lightbox from "@/components/ui/Lightbox";
 import { cn } from "@/lib/utils";
+import { Play } from "lucide-react";
 
-// Import all service images
+// Import fallback service images
 import pladur from "@/assets/services/pladur.jpg";
 import estuque from "@/assets/services/estuque.jpg";
 import pintura from "@/assets/services/pintura.jpg";
@@ -32,44 +35,77 @@ const categories = [
   { id: "mobiliario", name: "Mobiliário" },
   { id: "paredes", name: "Paredes" },
   { id: "casasbanho", name: "Casas de Banho" },
+  { id: "pladur", name: "Pladur" },
+  { id: "pintura", name: "Pintura" },
+  { id: "tecto-falso", name: "Tecto Falso" },
+  { id: "cozinha-americana", name: "Cozinha Americana" },
+  { id: "guarda-roupa", name: "Guarda-roupa" },
+  { id: "vasos", name: "Vasos Personalizados" },
+  { id: "artesanato", name: "Artesanato" },
+  { id: "outros", name: "Outros" },
 ];
 
-const portfolioItems = [
-  // Acabamentos
-  { id: 1, image: pladur, title: "Acabamento em Pladur", category: "acabamentos" },
-  { id: 2, image: estuque, title: "Estuque Decorativo", category: "acabamentos" },
-  { id: 3, image: pintura, title: "Pintura Profissional", category: "acabamentos" },
-  { id: 4, image: ladrilho, title: "Ladrilho Moderno", category: "acabamentos" },
-  
-  // Tectos
-  { id: 5, image: tectoFalso, title: "Tecto Falso com LED", category: "tectos" },
-  
-  // Paredes
-  { id: 6, image: papelParede, title: "Papel de Parede", category: "paredes" },
-  { id: 7, image: papelVinilico, title: "Papel Vinílico", category: "paredes" },
-  { id: 8, image: placas3d, title: "Placas 3D Decorativas", category: "paredes" },
-  { id: 9, image: pedrasNaturais, title: "Pedras Naturais", category: "paredes" },
-  { id: 10, image: espelhoParede, title: "Espelho de Parede", category: "paredes" },
-  
-  // Cozinhas
-  { id: 11, image: cozinhaAmericana, title: "Cozinha Americana", category: "cozinhas" },
-  
-  // Mobiliário
-  { id: 12, image: painelTv, title: "Painel de TV", category: "mobiliario" },
-  { id: 13, image: guardaRoupa, title: "Guarda-Roupa Planejado", category: "mobiliario" },
-  { id: 14, image: garrafeira, title: "Garrafeira", category: "mobiliario" },
-  { id: 15, image: divisorias, title: "Divisórias", category: "mobiliario" },
-  { id: 16, image: estantes, title: "Estantes Planejadas", category: "mobiliario" },
-  { id: 17, image: sapateiras, title: "Sapateiras", category: "mobiliario" },
-  
-  // Casas de Banho
-  { id: 18, image: sanitasLavatorios, title: "Sanitas e Lavatórios", category: "casasbanho" },
+// Fallback static items (used when no DB items exist)
+const staticItems = [
+  { id: "s1", image: pladur, title: "Acabamento em Pladur", category: "acabamentos", media_type: "image" },
+  { id: "s2", image: estuque, title: "Estuque Decorativo", category: "acabamentos", media_type: "image" },
+  { id: "s3", image: pintura, title: "Pintura Profissional", category: "acabamentos", media_type: "image" },
+  { id: "s4", image: ladrilho, title: "Ladrilho Moderno", category: "acabamentos", media_type: "image" },
+  { id: "s5", image: tectoFalso, title: "Tecto Falso com LED", category: "tectos", media_type: "image" },
+  { id: "s6", image: papelParede, title: "Papel de Parede", category: "paredes", media_type: "image" },
+  { id: "s7", image: papelVinilico, title: "Papel Vinílico", category: "paredes", media_type: "image" },
+  { id: "s8", image: placas3d, title: "Placas 3D Decorativas", category: "paredes", media_type: "image" },
+  { id: "s9", image: pedrasNaturais, title: "Pedras Naturais", category: "paredes", media_type: "image" },
+  { id: "s10", image: espelhoParede, title: "Espelho de Parede", category: "paredes", media_type: "image" },
+  { id: "s11", image: cozinhaAmericana, title: "Cozinha Americana", category: "cozinhas", media_type: "image" },
+  { id: "s12", image: painelTv, title: "Painel de TV", category: "mobiliario", media_type: "image" },
+  { id: "s13", image: guardaRoupa, title: "Guarda-Roupa Planejado", category: "mobiliario", media_type: "image" },
+  { id: "s14", image: garrafeira, title: "Garrafeira", category: "mobiliario", media_type: "image" },
+  { id: "s15", image: divisorias, title: "Divisórias", category: "mobiliario", media_type: "image" },
+  { id: "s16", image: estantes, title: "Estantes Planejadas", category: "mobiliario", media_type: "image" },
+  { id: "s17", image: sapateiras, title: "Sapateiras", category: "mobiliario", media_type: "image" },
+  { id: "s18", image: sanitasLavatorios, title: "Sanitas e Lavatórios", category: "casasbanho", media_type: "image" },
 ];
+
+interface PortfolioItem {
+  id: string;
+  image: string;
+  title: string;
+  category: string;
+  media_type: string;
+}
 
 const Portfolio = () => {
   const [activeCategory, setActiveCategory] = useState("todos");
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  // Fetch from database
+  const { data: dbItems = [] } = useQuery({
+    queryKey: ["portfolio-items"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("portfolio_items")
+        .select("*")
+        .order("display_order", { ascending: true });
+      
+      if (error) throw error;
+      return data.map(item => ({
+        id: item.id,
+        image: item.image_url,
+        title: item.title,
+        category: item.category,
+        media_type: item.media_type || "image",
+      }));
+    },
+  });
+
+  // Use DB items if available, otherwise use static items
+  const portfolioItems: PortfolioItem[] = dbItems.length > 0 ? dbItems : staticItems;
+
+  // Get unique categories that have items
+  const activeCategories = ["todos", ...new Set(portfolioItems.map(item => item.category))];
+  const displayCategories = categories.filter(cat => activeCategories.includes(cat.id));
 
   const filteredItems = activeCategory === "todos" 
     ? portfolioItems 
@@ -80,14 +116,25 @@ const Portfolio = () => {
   };
 
   const openLightbox = (index: number) => {
+    // Only open lightbox for images, not videos
+    const item = filteredItems[index];
+    if (item.media_type === "video") return;
+    
     setLightboxIndex(index);
     setLightboxOpen(true);
   };
 
-  const lightboxImages = filteredItems.map(item => ({
+  // Filter only images for lightbox
+  const imageItems = filteredItems.filter(item => item.media_type === "image");
+  const lightboxImages = imageItems.map(item => ({
     src: item.image,
     title: item.title,
   }));
+
+  const getLightboxIndexForImage = (itemIndex: number) => {
+    const item = filteredItems[itemIndex];
+    return imageItems.findIndex(img => img.id === item.id);
+  };
 
   return (
     <Layout>
@@ -95,7 +142,7 @@ const Portfolio = () => {
       <section className="py-6 bg-background border-b border-border sticky top-14 z-30">
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap justify-center gap-1.5">
-            {categories.map((category) => (
+            {displayCategories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => setActiveCategory(category.id)}
@@ -124,15 +171,34 @@ const Portfolio = () => {
                 delay={index * 50}
               >
                 <div 
-                  className="group relative aspect-square rounded-2xl overflow-hidden cursor-pointer"
-                  onClick={() => openLightbox(index)}
+                  className={cn(
+                    "group relative aspect-square rounded-2xl overflow-hidden",
+                    item.media_type === "image" && "cursor-pointer"
+                  )}
+                  onClick={() => item.media_type === "image" && openLightbox(index)}
                 >
-                  <img 
-                    src={item.image} 
-                    alt={item.title} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    loading="lazy"
-                  />
+                  {item.media_type === "video" ? (
+                    <video 
+                      src={item.image} 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                    />
+                  ) : (
+                    <img 
+                      src={item.image} 
+                      alt={item.title} 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      loading="lazy"
+                    />
+                  )}
+                  {item.media_type === "video" && (
+                    <div className="absolute top-3 right-3 bg-black/60 text-white p-2 rounded-full">
+                      <Play className="h-4 w-4" />
+                    </div>
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
                   <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
                     <span className="inline-block px-3 py-1 rounded-full bg-primary/90 text-primary-foreground text-xs font-medium mb-2">
