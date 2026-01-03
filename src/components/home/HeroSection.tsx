@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Phone, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import OptimizedImage from "@/components/ui/OptimizedImage";
 import vasosPersonalizados from "@/assets/vasos-personalizados.jpg";
 
 const HeroSection = () => {
@@ -77,10 +78,12 @@ const HeroSection = () => {
           {/* Image */}
           <div className="relative animate-slide-up" style={{ animationDelay: "0.2s" }}>
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
-              <img
+              <OptimizedImage
                 src={vasosPersonalizados}
                 alt="Vasos Personalizados"
                 className="w-full h-full object-cover"
+                containerClassName="w-full h-full"
+                priority
               />
               <div className="absolute inset-0 bg-gradient-to-t from-foreground/20 to-transparent" />
             </div>

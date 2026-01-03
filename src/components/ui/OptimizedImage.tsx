@@ -8,6 +8,8 @@ interface OptimizedImageProps {
   className?: string;
   containerClassName?: string;
   onClick?: () => void;
+  priority?: boolean;
+  sizes?: string;
 }
 
 const OptimizedImage = memo(({ 
@@ -15,13 +17,21 @@ const OptimizedImage = memo(({
   alt, 
   className, 
   containerClassName,
-  onClick 
+  onClick,
+  priority = false,
+  sizes,
 }: OptimizedImageProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [isInView, setIsInView] = useState(false);
+  const [isInView, setIsInView] = useState(priority);
   const imgRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // If priority, load immediately
+    if (priority) {
+      setIsInView(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -30,7 +40,7 @@ const OptimizedImage = memo(({
         }
       },
       { 
-        rootMargin: "100px",
+        rootMargin: "200px",
         threshold: 0.01 
       }
     );
@@ -40,12 +50,12 @@ const OptimizedImage = memo(({
     }
 
     return () => observer.disconnect();
-  }, []);
+  }, [priority]);
 
   return (
     <div 
       ref={imgRef} 
-      className={cn("relative overflow-hidden", containerClassName)}
+      className={cn("relative overflow-hidden bg-muted", containerClassName)}
       onClick={onClick}
     >
       {!isLoaded && (
@@ -55,11 +65,12 @@ const OptimizedImage = memo(({
         <img
           src={src}
           alt={alt}
-          loading="lazy"
+          loading={priority ? "eager" : "lazy"}
           decoding="async"
+          sizes={sizes}
           onLoad={() => setIsLoaded(true)}
           className={cn(
-            "transition-opacity duration-300",
+            "transition-opacity duration-200",
             isLoaded ? "opacity-100" : "opacity-0",
             className
           )}

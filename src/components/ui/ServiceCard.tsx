@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import * as LucideIcons from "lucide-react";
 import { Service } from "@/data/services";
+import OptimizedImage from "@/components/ui/OptimizedImage";
 
 interface ServiceCardProps {
   service: Service;
@@ -16,10 +17,11 @@ const ServiceCard = ({ service, variant = "default", disableLink = false }: Serv
     <>
       {/* Service Image */}
       <div className="aspect-[4/3] overflow-hidden">
-        <img
+        <OptimizedImage
           src={service.image}
           alt={service.name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          containerClassName="w-full h-full"
         />
       </div>
       
