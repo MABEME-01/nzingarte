@@ -1,35 +1,35 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import portfolio1 from "@/assets/portfolio-1.jpg";
-import portfolio2 from "@/assets/portfolio-2.jpg";
-import portfolio3 from "@/assets/portfolio-3.jpg";
-import portfolio4 from "@/assets/portfolio-4.jpg";
+import trabalho1 from "@/assets/videos/trabalho-1.mp4";
+import trabalho2 from "@/assets/videos/trabalho-2.mp4";
+import vasosVideo from "@/assets/videos/vasos-personalizados.mp4";
+import tectoFalsoVideo from "@/assets/videos/tecto-falso.mp4";
 
 const portfolioItems = [
   {
     id: 1,
-    image: portfolio1,
-    title: "Sala de Estar Moderna",
+    video: trabalho1,
+    title: "Trabalho 1",
     category: "Decoração Interior",
   },
   {
     id: 2,
-    image: portfolio2,
-    title: "Tecto Falso com LED",
-    category: "Tecto Falso",
+    video: trabalho2,
+    title: "Trabalho 2",
+    category: "Decoração Interior",
   },
   {
     id: 3,
-    image: portfolio3,
-    title: "Cozinha Americana",
-    category: "Cozinha",
+    video: vasosVideo,
+    title: "Vasos Personalizados",
+    category: "Artesanato",
   },
   {
     id: 4,
-    image: portfolio4,
-    title: "Painel de TV",
-    category: "Painel TV",
+    video: tectoFalsoVideo,
+    title: "Tecto Falso",
+    category: "Tecto Falso",
   },
 ];
 
@@ -60,13 +60,17 @@ const PortfolioPreview = () => {
               className="group relative aspect-square rounded-2xl overflow-hidden animate-slide-up"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <img
-                src={item.image}
-                alt={item.title}
+              <video
+                src={item.video}
+                autoPlay
+                loop
+                muted
+                playsInline
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+              {/* Title always visible */}
+              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-foreground/70 to-transparent">
                 <p className="text-xs text-primary-foreground/80 mb-1">
                   {item.category}
                 </p>

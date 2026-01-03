@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Phone, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import portfolio1 from "@/assets/portfolio-1.jpg";
+import vasosPersonalizados from "@/assets/vasos-personalizados.jpg";
 
 const HeroSection = () => {
   return (
@@ -78,8 +78,8 @@ const HeroSection = () => {
           <div className="relative animate-slide-up" style={{ animationDelay: "0.2s" }}>
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
               <img
-                src={portfolio1}
-                alt="Trabalho de decoração NZINGA'RTE"
+                src={vasosPersonalizados}
+                alt="Vasos Personalizados"
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-foreground/20 to-transparent" />
@@ -92,8 +92,8 @@ const HeroSection = () => {
                   <Star className="h-6 w-6 text-primary-foreground fill-current" />
                 </div>
                 <div>
-                  <p className="font-display font-bold text-foreground">18+</p>
-                  <p className="text-xs text-muted-foreground">Serviços disponíveis</p>
+                  <p className="font-display font-bold text-foreground">Vasos Personalizados</p>
+                  <p className="text-xs text-muted-foreground">Artesanato único</p>
                 </div>
               </div>
             </div>
