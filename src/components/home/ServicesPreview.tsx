@@ -33,7 +33,7 @@ const ServicesPreview = () => {
               className="animate-slide-up"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <ServiceCard service={service} />
+              <ServiceCard service={service} disableLink />
             </div>
           ))}
         </div>
@@ -41,7 +41,7 @@ const ServicesPreview = () => {
         {/* View All Button */}
         <div className="text-center">
           <Button size="lg" className="group bg-[#C9A456] hover:bg-[#B8944A] text-white border-none" asChild>
-            <Link to="/servicos">
+            <Link to="/portfolio">
               Ver Todos os Serviços
               <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Link>
