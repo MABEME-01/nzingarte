@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import OptimizedVideo from "@/components/ui/OptimizedVideo";
 import trabalho1 from "@/assets/videos/trabalho-1.mp4";
 import trabalho2 from "@/assets/videos/trabalho-2.mp4";
 import vasosVideo from "@/assets/videos/vasos-personalizados.mp4";
@@ -60,13 +61,14 @@ const PortfolioPreview = () => {
               className="group relative aspect-square rounded-2xl overflow-hidden animate-slide-up"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <video
+              <OptimizedVideo
                 src={item.video}
+                containerClassName="w-full h-full"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 autoPlay
                 loop
                 muted
                 playsInline
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               {/* Title always visible */}

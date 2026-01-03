@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import Layout from "@/components/layout/Layout";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import Lightbox from "@/components/ui/Lightbox";
+import OptimizedImage from "@/components/ui/OptimizedImage";
+import OptimizedVideo from "@/components/ui/OptimizedVideo";
 import { cn } from "@/lib/utils";
-import { Play } from "lucide-react";
 
 // Import fallback service images
 import pladur from "@/assets/services/pladur.jpg";
@@ -131,11 +132,6 @@ const Portfolio = () => {
     title: item.title,
   }));
 
-  const getLightboxIndexForImage = (itemIndex: number) => {
-    const item = filteredItems[itemIndex];
-    return imageItems.findIndex(img => img.id === item.id);
-  };
-
   return (
     <Layout>
       {/* Filters */}
@@ -178,26 +174,23 @@ const Portfolio = () => {
                   onClick={() => item.media_type === "image" && openLightbox(index)}
                 >
                   {item.media_type === "video" ? (
-                    <video 
-                      src={item.image} 
+                    <OptimizedVideo
+                      src={item.image}
+                      containerClassName="w-full h-full"
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       autoPlay
                       loop
                       muted
                       playsInline
+                      showPlayIcon
                     />
                   ) : (
-                    <img 
-                      src={item.image} 
-                      alt={item.title} 
+                    <OptimizedImage
+                      src={item.image}
+                      alt={item.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                      loading="lazy"
+                      containerClassName="w-full h-full"
                     />
-                  )}
-                  {item.media_type === "video" && (
-                    <div className="absolute top-3 right-3 bg-black/60 text-white p-2 rounded-full">
-                      <Play className="h-4 w-4" />
-                    </div>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
                   <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
