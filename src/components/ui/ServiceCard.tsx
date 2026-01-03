@@ -77,7 +77,7 @@ const ServiceCard = ({ service, variant = "default", disableLink = false }: Serv
 
   if (disableLink) {
     return (
-      <div className="group block rounded-2xl bg-card border border-border overflow-hidden">
+      <div className="group block rounded-2xl bg-card border border-border overflow-hidden hover:border-primary/30 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-2 transition-all duration-500 ease-out cursor-default">
         {cardContent}
       </div>
     );
