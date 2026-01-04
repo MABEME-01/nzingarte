@@ -6,11 +6,16 @@ import trabalho1 from "@/assets/videos/trabalho-1.mp4";
 import trabalho2 from "@/assets/videos/trabalho-2.mp4";
 import vasosVideo from "@/assets/videos/vasos-personalizados.mp4";
 import tectoFalsoVideo from "@/assets/videos/tecto-falso.mp4";
+import portfolio1 from "@/assets/portfolio-1.jpg";
+import portfolio2 from "@/assets/portfolio-2.jpg";
+import vasosPoster from "@/assets/vasos-personalizados.jpg";
+import tectoFalsoPoster from "@/assets/services/tecto-falso.jpg";
 
 const portfolioItems = [
   {
     id: 1,
     video: trabalho1,
+    poster: portfolio1,
     title: "Trabalho 1",
     category: "Decoração Interior",
     posterColor: "#8B7355",
@@ -18,6 +23,7 @@ const portfolioItems = [
   {
     id: 2,
     video: trabalho2,
+    poster: portfolio2,
     title: "Trabalho 2",
     category: "Decoração Interior",
     posterColor: "#A0937D",
@@ -25,6 +31,7 @@ const portfolioItems = [
   {
     id: 3,
     video: vasosVideo,
+    poster: vasosPoster,
     title: "Vasos Personalizados",
     category: "Artesanato",
     posterColor: "#C4A77D",
@@ -32,6 +39,7 @@ const portfolioItems = [
   {
     id: 4,
     video: tectoFalsoVideo,
+    poster: tectoFalsoPoster,
     title: "Tecto Falso",
     category: "Tecto Falso",
     posterColor: "#D4C4A8",
@@ -67,6 +75,7 @@ const PortfolioPreview = () => {
             >
               <OptimizedVideo
                 src={item.video}
+                poster={item.poster}
                 posterColor={item.posterColor}
                 containerClassName="w-full h-full"
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
