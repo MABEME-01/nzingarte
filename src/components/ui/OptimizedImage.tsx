@@ -1,6 +1,5 @@
-import { useState, useRef, useEffect, memo } from "react";
+import { useState, useRef, useEffect, memo, useCallback } from "react";
 import { cn } from "@/lib/utils";
-import { Skeleton } from "@/components/ui/skeleton";
 
 interface OptimizedImageProps {
   src: string;
@@ -26,7 +25,6 @@ const OptimizedImage = memo(({
   const imgRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // If priority, load immediately
     if (priority) {
       setIsInView(true);
       return;
@@ -40,7 +38,7 @@ const OptimizedImage = memo(({
         }
       },
       { 
-        rootMargin: "200px",
+        rootMargin: "100px",
         threshold: 0.01 
       }
     );
@@ -52,14 +50,19 @@ const OptimizedImage = memo(({
     return () => observer.disconnect();
   }, [priority]);
 
+  const handleLoad = useCallback(() => {
+    setIsLoaded(true);
+  }, []);
+
   return (
     <div 
       ref={imgRef} 
       className={cn("relative overflow-hidden bg-muted", containerClassName)}
       onClick={onClick}
     >
+      {/* CSS shimmer placeholder */}
       {!isLoaded && (
-        <Skeleton className="absolute inset-0 w-full h-full" />
+        <div className="absolute inset-0 shimmer-placeholder" />
       )}
       {isInView && (
         <img
@@ -68,9 +71,9 @@ const OptimizedImage = memo(({
           loading={priority ? "eager" : "lazy"}
           decoding="async"
           sizes={sizes}
-          onLoad={() => setIsLoaded(true)}
+          onLoad={handleLoad}
           className={cn(
-            "transition-opacity duration-200",
+            "transition-opacity duration-300",
             isLoaded ? "opacity-100" : "opacity-0",
             className
           )}

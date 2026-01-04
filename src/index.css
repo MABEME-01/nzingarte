@@ -232,3 +232,50 @@
     transform: scale3d(1, 1, 1);
   }
 }
+
+/* Shimmer placeholder animation - lightweight */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer-placeholder {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted)) 0%,
+    hsl(var(--muted-foreground) / 0.08) 50%,
+    hsl(var(--muted)) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Reduce motion for accessibility and slow connections */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .shimmer-placeholder {
+    animation: none;
+    background: hsl(var(--muted));
+  }
+}
+
+/* Reduce animations on slow connections */
+@media (update: slow) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.1s !important;
+    transition-duration: 0.1s !important;
+  }
+}
