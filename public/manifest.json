@@ -1,0 +1,17 @@
+{
+  "name": "Nzinga - Remodelações e Serviços",
+  "short_name": "Nzinga",
+  "description": "Serviços de remodelação, construção e decoração de interiores",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#c9a86c",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}
