@@ -69,6 +69,7 @@ const PortfolioPreview = () => {
                 loop
                 muted
                 playsInline
+                priority={index < 2}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               {/* Title always visible */}
