@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,45 +6,35 @@ import trabalho1 from "@/assets/videos/trabalho-1.mp4";
 import trabalho2 from "@/assets/videos/trabalho-2.mp4";
 import vasosVideo from "@/assets/videos/vasos-personalizados.mp4";
 import tectoFalsoVideo from "@/assets/videos/tecto-falso.mp4";
-import portfolio1 from "@/assets/portfolio-1.jpg";
-import portfolio2 from "@/assets/portfolio-2.jpg";
-import vasosPoster from "@/assets/vasos-personalizados.jpg";
-import tectoFalsoPoster from "@/assets/services/tecto-falso.jpg";
 
 const portfolioItems = [
   {
     id: 1,
     video: trabalho1,
-    poster: portfolio1,
     title: "Trabalho 1",
     category: "Decoração Interior",
   },
   {
     id: 2,
     video: trabalho2,
-    poster: portfolio2,
     title: "Trabalho 2",
     category: "Decoração Interior",
   },
   {
     id: 3,
     video: vasosVideo,
-    poster: vasosPoster,
     title: "Vasos Personalizados",
     category: "Artesanato",
   },
   {
     id: 4,
     video: tectoFalsoVideo,
-    poster: tectoFalsoPoster,
     title: "Tecto Falso",
     category: "Tecto Falso",
   },
 ];
 
 const PortfolioPreview = () => {
-  const [activeVideoId, setActiveVideoId] = useState<number>(portfolioItems[0]?.id ?? 0);
-
   return (
     <section className="py-20 bg-background">
       <div className="container mx-auto px-4">
@@ -69,30 +58,18 @@ const PortfolioPreview = () => {
             <Link
               key={item.id}
               to="/portfolio"
-              onMouseEnter={() => setActiveVideoId(item.id)}
-              onFocus={() => setActiveVideoId(item.id)}
               className="group relative aspect-square rounded-2xl overflow-hidden animate-slide-up"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              {activeVideoId === item.id ? (
-                <OptimizedVideo
-                  src={item.video}
-                  poster={item.poster}
-                  containerClassName="w-full h-full"
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                />
-              ) : (
-                <img
-                  src={item.poster}
-                  alt={`${item.title} — vídeo`}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  loading="lazy"
-                />
-              )}
+              <OptimizedVideo
+                src={item.video}
+                containerClassName="w-full h-full"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                autoPlay
+                loop
+                muted
+                playsInline
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               {/* Title always visible */}
               <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-foreground/70 to-transparent">
