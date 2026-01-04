@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,7 +19,6 @@ const portfolioItems = [
     poster: portfolio1,
     title: "Trabalho 1",
     category: "Decoração Interior",
-    posterColor: "#8B7355",
   },
   {
     id: 2,
@@ -26,7 +26,6 @@ const portfolioItems = [
     poster: portfolio2,
     title: "Trabalho 2",
     category: "Decoração Interior",
-    posterColor: "#A0937D",
   },
   {
     id: 3,
@@ -34,7 +33,6 @@ const portfolioItems = [
     poster: vasosPoster,
     title: "Vasos Personalizados",
     category: "Artesanato",
-    posterColor: "#C4A77D",
   },
   {
     id: 4,
@@ -42,11 +40,12 @@ const portfolioItems = [
     poster: tectoFalsoPoster,
     title: "Tecto Falso",
     category: "Tecto Falso",
-    posterColor: "#D4C4A8",
   },
 ];
 
 const PortfolioPreview = () => {
+  const [activeVideoId, setActiveVideoId] = useState<number>(portfolioItems[0]?.id ?? 0);
+
   return (
     <section className="py-20 bg-background">
       <div className="container mx-auto px-4">
@@ -70,20 +69,30 @@ const PortfolioPreview = () => {
             <Link
               key={item.id}
               to="/portfolio"
+              onMouseEnter={() => setActiveVideoId(item.id)}
+              onFocus={() => setActiveVideoId(item.id)}
               className="group relative aspect-square rounded-2xl overflow-hidden animate-slide-up"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <OptimizedVideo
-                src={item.video}
-                poster={item.poster}
-                posterColor={item.posterColor}
-                containerClassName="w-full h-full"
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                autoPlay
-                loop
-                muted
-                playsInline
-              />
+              {activeVideoId === item.id ? (
+                <OptimizedVideo
+                  src={item.video}
+                  poster={item.poster}
+                  containerClassName="w-full h-full"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                />
+              ) : (
+                <img
+                  src={item.poster}
+                  alt={`${item.title} — vídeo`}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  loading="lazy"
+                />
+              )}
               <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               {/* Title always visible */}
               <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-foreground/70 to-transparent">

@@ -7,6 +7,7 @@ import Lightbox from "@/components/ui/Lightbox";
 import OptimizedImage from "@/components/ui/OptimizedImage";
 import OptimizedVideo from "@/components/ui/OptimizedVideo";
 import { cn } from "@/lib/utils";
+import { Play } from "lucide-react";
 
 // Import fallback service images
 import pladur from "@/assets/services/pladur.jpg";
@@ -80,6 +81,7 @@ const Portfolio = () => {
   const [activeCategory, setActiveCategory] = useState("todos");
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [activeVideoId, setActiveVideoId] = useState<string | null>(null);
 
   // Fetch from database
   const { data: dbItems = [] } = useQuery({
@@ -171,19 +173,37 @@ const Portfolio = () => {
                     "group relative aspect-square rounded-2xl overflow-hidden",
                     item.media_type === "image" && "cursor-pointer"
                   )}
-                  onClick={() => item.media_type === "image" && openLightbox(index)}
+                  onMouseEnter={() => item.media_type === "video" && setActiveVideoId(item.id)}
+                  onMouseLeave={() => item.media_type === "video" && setActiveVideoId((prev) => (prev === item.id ? null : prev))}
+                  onClick={() => {
+                    if (item.media_type === "video") {
+                      setActiveVideoId((prev) => (prev === item.id ? null : item.id));
+                      return;
+                    }
+                    openLightbox(index);
+                  }}
                 >
                   {item.media_type === "video" ? (
-                    <OptimizedVideo
-                      src={item.image}
-                      containerClassName="w-full h-full"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      showPlayIcon
-                    />
+                    activeVideoId === item.id ? (
+                      <OptimizedVideo
+                        src={item.image}
+                        containerClassName="w-full h-full"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        showPlayIcon
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-muted">
+                        <div className="absolute inset-0 grid place-items-center">
+                          <span className="rounded-full bg-background/70 backdrop-blur-sm p-3">
+                            <Play className="h-6 w-6 text-foreground" />
+                          </span>
+                        </div>
+                      </div>
+                    )
                   ) : (
                     <OptimizedImage
                       src={item.image}
