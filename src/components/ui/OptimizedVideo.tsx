@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect, memo } from "react";
 import { cn } from "@/lib/utils";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Play } from "lucide-react";
 
 interface OptimizedVideoProps {
   src: string;
+  srcWebm?: string;
   poster?: string;
+  posterColor?: string;
   alt?: string;
   className?: string;
   containerClassName?: string;
@@ -18,7 +19,9 @@ interface OptimizedVideoProps {
 
 const OptimizedVideo = memo(({ 
   src, 
+  srcWebm,
   poster,
+  posterColor = "hsl(var(--muted))",
   alt = "Video",
   className, 
   containerClassName,
@@ -30,7 +33,6 @@ const OptimizedVideo = memo(({
 }: OptimizedVideoProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isInView, setIsInView] = useState(false);
-  const [hasStartedLoading, setHasStartedLoading] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -43,7 +45,7 @@ const OptimizedVideo = memo(({
         }
       },
       { 
-        rootMargin: "200px",
+        rootMargin: "100px",
         threshold: 0.01 
       }
     );
@@ -55,35 +57,27 @@ const OptimizedVideo = memo(({
     return () => observer.disconnect();
   }, []);
 
-  // Start loading video when in view
   useEffect(() => {
-    if (isInView && !hasStartedLoading && videoRef.current) {
-      setHasStartedLoading(true);
+    if (isInView && videoRef.current) {
       videoRef.current.load();
     }
-  }, [isInView, hasStartedLoading]);
+  }, [isInView]);
 
   const handleCanPlay = () => {
     setIsLoaded(true);
     if (autoPlay && videoRef.current) {
-      videoRef.current.play().catch(() => {
-        // Autoplay might be blocked, that's ok
-      });
+      videoRef.current.play().catch(() => {});
     }
   };
 
   return (
     <div 
       ref={containerRef} 
-      className={cn("relative overflow-hidden bg-muted", containerClassName)}
+      className={cn("relative overflow-hidden", containerClassName)}
+      style={{ backgroundColor: posterColor }}
     >
-      {/* Skeleton placeholder */}
-      {!isLoaded && (
-        <Skeleton className="absolute inset-0 w-full h-full" />
-      )}
-      
       {/* Poster image while loading */}
-      {poster && !isLoaded && isInView && (
+      {poster && !isLoaded && (
         <img
           src={poster}
           alt={alt}
@@ -96,17 +90,18 @@ const OptimizedVideo = memo(({
         <video
           ref={videoRef}
           poster={poster}
-          preload="none"
+          preload="metadata"
           loop={loop}
           muted={muted}
           playsInline={playsInline}
           onCanPlay={handleCanPlay}
           className={cn(
-            "transition-opacity duration-300",
+            "transition-opacity duration-200",
             isLoaded ? "opacity-100" : "opacity-0",
             className
           )}
         >
+          {srcWebm && <source src={srcWebm} type="video/webm" />}
           <source src={src} type="video/mp4" />
         </video>
       )}
