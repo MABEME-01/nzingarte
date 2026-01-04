@@ -13,24 +13,28 @@ const portfolioItems = [
     video: trabalho1,
     title: "Trabalho 1",
     category: "Decoração Interior",
+    posterColor: "#8B7355",
   },
   {
     id: 2,
     video: trabalho2,
     title: "Trabalho 2",
     category: "Decoração Interior",
+    posterColor: "#A0937D",
   },
   {
     id: 3,
     video: vasosVideo,
     title: "Vasos Personalizados",
     category: "Artesanato",
+    posterColor: "#C4A77D",
   },
   {
     id: 4,
     video: tectoFalsoVideo,
     title: "Tecto Falso",
     category: "Tecto Falso",
+    posterColor: "#D4C4A8",
   },
 ];
 
@@ -63,6 +67,7 @@ const PortfolioPreview = () => {
             >
               <OptimizedVideo
                 src={item.video}
+                posterColor={item.posterColor}
                 containerClassName="w-full h-full"
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 autoPlay

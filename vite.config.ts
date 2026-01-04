@@ -28,14 +28,6 @@ export default defineConfig(({ mode }) => ({
         },
       },
     },
-    // Minification
-    minify: "terser",
-    terserOptions: {
-      compress: {
-        drop_console: mode === "production",
-        drop_debugger: mode === "production",
-      },
-    },
     // Better source maps for production
     sourcemap: mode === "development",
   },
