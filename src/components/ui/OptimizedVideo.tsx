@@ -39,14 +39,11 @@ const OptimizedVideo = memo(({
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInView(true);
-          observer.disconnect();
-        }
+        setIsInView(entry.isIntersecting);
       },
-      { 
-        rootMargin: "100px",
-        threshold: 0.01 
+      {
+        rootMargin: "200px",
+        threshold: 0.15,
       }
     );
 
@@ -57,18 +54,34 @@ const OptimizedVideo = memo(({
     return () => observer.disconnect();
   }, []);
 
+  const hasLoadedRef = useRef(false);
+
   useEffect(() => {
-    if (isInView && videoRef.current) {
+    if (isInView && videoRef.current && !hasLoadedRef.current) {
+      hasLoadedRef.current = true;
       videoRef.current.load();
     }
   }, [isInView]);
 
   const handleCanPlay = () => {
     setIsLoaded(true);
-    if (autoPlay && videoRef.current) {
-      videoRef.current.play().catch(() => {});
-    }
   };
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    // Always pause when not visible or when autoplay is disabled
+    if (!isInView || !autoPlay) {
+      video.pause();
+      return;
+    }
+
+    // Try to keep playback going when visible
+    if (isLoaded) {
+      video.play().catch(() => {});
+    }
+  }, [autoPlay, isInView, isLoaded]);
 
   return (
     <div 
@@ -90,11 +103,13 @@ const OptimizedVideo = memo(({
         <video
           ref={videoRef}
           poster={poster}
-          preload="metadata"
+          preload={autoPlay ? "auto" : "metadata"}
+          autoPlay={autoPlay}
           loop={loop}
           muted={muted}
           playsInline={playsInline}
           onCanPlay={handleCanPlay}
+          onCanPlayThrough={handleCanPlay}
           className={cn(
             "transition-opacity duration-200",
             isLoaded ? "opacity-100" : "opacity-0",
