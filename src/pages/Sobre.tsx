@@ -2,7 +2,7 @@ import { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import Lightbox from "@/components/ui/Lightbox";
-import { CheckCircle, Target, Eye, Heart, Award, Users, Clock, MapPin, Camera } from "lucide-react";
+import { CheckCircle, Target, Eye, Heart, Award, Users, Clock, MapPin, Camera, Phone } from "lucide-react";
 import portfolio1 from "@/assets/portfolio-1.jpg";
 import portfolio2 from "@/assets/portfolio-2.jpg";
 import portfolio3 from "@/assets/portfolio-3.jpg";
@@ -25,6 +25,7 @@ import pladur from "@/assets/services/pladur.jpg";
 import sanitasLavatorios from "@/assets/services/sanitas-lavatorios.jpg";
 import sapateiras from "@/assets/services/sapateiras.jpg";
 import tectoFalso from "@/assets/services/tecto-falso.jpg";
+import { owners } from "@/components/ui/WhatsAppContactModal";
 
 const valores = [
   "Qualidade em cada detalhe",
@@ -33,6 +34,30 @@ const valores = [
   "Profissionalismo exemplar",
   "Respeito pelo cliente",
   "Inovação constante",
+];
+
+const fundadores = [
+  {
+    name: "Samuel Nzinga Júnior",
+    role: "Fundador & CEO",
+    phone: "+244 936 163 587",
+    description: "Natural de Mbanza Kongo, Samuel é um empreendedor visionário que transformou a sua paixão pela decoração e construção numa empresa de referência na região. Com formação técnica em construção civil e anos de experiência prática, fundou a NZINGA'RTE com o objetivo de oferecer serviços de decoração de alta qualidade a preços acessíveis.",
+    image: portfolio1,
+  },
+  {
+    name: "Ndombe Makuta",
+    role: "Co-Fundador & Diretor de Operações",
+    phone: "+244 948 120 646",
+    description: "Ndombe Makuta é um profissional experiente em gestão de projectos e operações. Com um olhar atento aos detalhes e forte capacidade de liderança, garante que cada projecto é executado com excelência e dentro dos prazos estabelecidos.",
+    image: portfolio2,
+  },
+  {
+    name: "Bikuki Daniel Júnior",
+    role: "Co-Fundador & Diretor Comercial",
+    phone: "+244 930 262 410",
+    description: "Bikuki Daniel Júnior é responsável pela área comercial e relacionamento com clientes. A sua dedicação ao atendimento personalizado e capacidade de entender as necessidades de cada cliente contribuem para o crescimento contínuo da empresa.",
+    image: portfolio3,
+  },
 ];
 
 const galeriaTrabalhos = [
@@ -109,49 +134,70 @@ const Sobre = () => {
         </div>
       </section>
 
-      {/* Founder Section */}
+      {/* Founders Section - Updated for 3 owners */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <AnimatedSection animation="slide-in-left" delay={100}>
-              <div className="relative">
-                <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-elegant">
-                  <img src={portfolio1} alt="Samuel Nzinga Júnior - Fundador" className="w-full h-full object-cover" />
+          <AnimatedSection animation="fade-in-up" className="text-center mb-12">
+            <span className="text-primary font-medium text-sm uppercase tracking-wider">A Nossa Equipa</span>
+            <h2 className="font-display text-3xl lg:text-4xl font-bold text-foreground mt-2">Os Fundadores</h2>
+            <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
+              Conheça os três visionários por trás da NZINGA'RTE, unidos pela paixão de transformar espaços.
+            </p>
+          </AnimatedSection>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {fundadores.map((fundador, index) => (
+              <AnimatedSection key={fundador.name} animation="fade-in-up" delay={index * 100}>
+                <div className="bg-card border border-border rounded-2xl overflow-hidden hover:shadow-elegant transition-shadow h-full flex flex-col">
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    <img 
+                      src={fundador.image} 
+                      alt={fundador.name} 
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <h3 className="font-display text-xl font-bold text-white">{fundador.name}</h3>
+                      <p className="text-white/80 text-sm">{fundador.role}</p>
+                    </div>
+                  </div>
+                  <div className="p-6 flex-1 flex flex-col">
+                    <p className="text-muted-foreground text-sm leading-relaxed mb-4 flex-1">
+                      {fundador.description}
+                    </p>
+                    <a 
+                      href={`https://wa.me/${fundador.phone.replace(/\s/g, '').replace('+', '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors text-sm font-medium"
+                    >
+                      <Phone className="h-4 w-4" />
+                      {fundador.phone}
+                    </a>
+                  </div>
                 </div>
-                <div className="absolute -bottom-6 -left-6 bg-primary text-primary-foreground p-6 rounded-2xl shadow-lg">
-                  <p className="font-display text-2xl font-bold">Samuel Nzinga</p>
-                  <p className="text-primary-foreground/80">Fundador & CEO</p>
-                </div>
-              </div>
-            </AnimatedSection>
-            <AnimatedSection animation="fade-in-up" delay={200}>
-              <span className="text-primary font-medium text-sm uppercase tracking-wider">O Fundador</span>
-              <h2 className="font-display text-3xl lg:text-4xl font-bold text-foreground mt-2 mb-6">Samuel Nzinga Júnior</h2>
-              <p className="text-muted-foreground leading-relaxed mb-4">
-                Natural de Mbanza Kongo, Samuel Nzinga Júnior é um empreendedor visionário que transformou a sua paixão pela decoração e construção numa empresa de referência na região.
-              </p>
-              <p className="text-muted-foreground leading-relaxed mb-4">
-                Com formação técnica em construção civil e anos de experiência prática, Samuel fundou a NZINGA'RTE com o objetivo de oferecer serviços de decoração de alta qualidade a preços acessíveis, contribuindo para a modernização dos espaços habitacionais e comerciais em Angola.
-              </p>
-              <p className="text-muted-foreground leading-relaxed mb-6">
-                Sob a sua liderança, a empresa já realizou mais de 150 projetos bem-sucedidos, conquistando a confiança de clientes em toda a província do Zaire e regiões vizinhas.
-              </p>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="text-center p-4 rounded-xl bg-secondary">
-                  <Award className="h-8 w-8 text-primary mx-auto mb-2" />
-                  <p className="text-sm text-muted-foreground">Fundador</p>
-                </div>
-                <div className="text-center p-4 rounded-xl bg-secondary">
-                  <Users className="h-8 w-8 text-primary mx-auto mb-2" />
-                  <p className="text-sm text-muted-foreground">Líder</p>
-                </div>
-                <div className="text-center p-4 rounded-xl bg-secondary">
-                  <Target className="h-8 w-8 text-primary mx-auto mb-2" />
-                  <p className="text-sm text-muted-foreground">Visionário</p>
-                </div>
-              </div>
-            </AnimatedSection>
+              </AnimatedSection>
+            ))}
           </div>
+          
+          <AnimatedSection animation="fade-in-up" delay={400} className="mt-12 text-center">
+            <div className="inline-flex items-center gap-4 p-6 rounded-2xl bg-secondary">
+              <div className="text-center">
+                <p className="font-display text-3xl font-bold text-primary">150+</p>
+                <p className="text-muted-foreground text-sm">Projectos</p>
+              </div>
+              <div className="w-px h-12 bg-border" />
+              <div className="text-center">
+                <p className="font-display text-3xl font-bold text-primary">3</p>
+                <p className="text-muted-foreground text-sm">Fundadores</p>
+              </div>
+              <div className="w-px h-12 bg-border" />
+              <div className="text-center">
+                <p className="font-display text-3xl font-bold text-primary">8+</p>
+                <p className="text-muted-foreground text-sm">Anos</p>
+              </div>
+            </div>
+          </AnimatedSection>
         </div>
       </section>
 
@@ -227,11 +273,11 @@ const Sobre = () => {
             <AnimatedSection animation="slide-in-right" delay={200}>
               <div className="relative">
                 <div className="aspect-video rounded-2xl overflow-hidden shadow-elegant">
-                  <img src={portfolio2} alt="Projecto NZINGA'RTE" className="w-full h-full object-cover" />
+                  <img src={portfolio4} alt="Projecto NZINGA'RTE" className="w-full h-full object-cover" />
                 </div>
                 <div className="absolute -top-6 -right-6 bg-card p-6 rounded-2xl shadow-elegant border border-border">
-                  <p className="font-display text-4xl font-bold text-primary">150+</p>
-                  <p className="text-muted-foreground text-sm">Projectos Realizados</p>
+                  <p className="font-display text-4xl font-bold text-primary">100%</p>
+                  <p className="text-muted-foreground text-sm">Satisfação</p>
                 </div>
               </div>
             </AnimatedSection>
