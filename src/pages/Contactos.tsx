@@ -5,12 +5,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Phone, Mail, MapPin, Send, HelpCircle } from "lucide-react";
+import { Phone, Mail, MapPin, Send, HelpCircle, MessageCircle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { services } from "@/data/services";
 import { z } from "zod";
+import WhatsAppContactModal, { owners } from "@/components/ui/WhatsAppContactModal";
 
 const faqItems = [
   {
@@ -153,10 +154,20 @@ const Contactos = () => {
                     <Phone className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-foreground mb-1">Telefone / WhatsApp</h3>
-                    <a href="tel:+244936163587" className="text-muted-foreground hover:text-primary transition-colors">
-                      +244 936 163 587
-                    </a>
+                    <h3 className="font-semibold text-foreground mb-2">Telefone / WhatsApp</h3>
+                    <div className="space-y-1">
+                      {owners.map((owner) => (
+                        <a 
+                          key={owner.whatsapp}
+                          href={`https://wa.me/${owner.whatsapp}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block text-muted-foreground hover:text-primary transition-colors text-sm"
+                        >
+                          {owner.name}: {owner.phone}
+                        </a>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
@@ -189,16 +200,12 @@ const Contactos = () => {
                 <p className="text-muted-foreground text-sm mb-4">
                   Fale connosco via WhatsApp para uma resposta imediata.
                 </p>
-                <Button asChild className="w-full sm:w-auto">
-                  <a
-                    href="https://wa.me/244936163587?text=Olá! Gostaria de pedir um orçamento."
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Phone className="mr-2 h-4 w-4" />
+                <WhatsAppContactModal message="Olá! Gostaria de pedir um orçamento.">
+                  <Button className="w-full sm:w-auto">
+                    <MessageCircle className="mr-2 h-4 w-4" />
                     Abrir WhatsApp
-                  </a>
-                </Button>
+                  </Button>
+                </WhatsAppContactModal>
               </div>
             </div>
 
@@ -328,16 +335,12 @@ const Contactos = () => {
             <p className="text-muted-foreground mb-4">
               Não encontrou a sua pergunta?
             </p>
-            <Button asChild variant="outline">
-              <a
-                href="https://wa.me/244936163587?text=Olá! Tenho uma dúvida sobre os vossos serviços."
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Phone className="mr-2 h-4 w-4" />
+            <WhatsAppContactModal message="Olá! Tenho uma dúvida sobre os vossos serviços.">
+              <Button variant="outline">
+                <MessageCircle className="mr-2 h-4 w-4" />
                 Fale Connosco
-              </a>
-            </Button>
+              </Button>
+            </WhatsAppContactModal>
           </div>
         </div>
       </section>

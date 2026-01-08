@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import WhatsAppContactModal from "@/components/ui/WhatsAppContactModal";
 
 const CTASection = () => {
   return (
@@ -33,22 +34,16 @@ const CTASection = () => {
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="bg-transparent border-primary-foreground/50 text-primary-foreground hover:bg-primary-foreground/10 hover:border-primary-foreground"
-              asChild
-            >
-              <a
-                href="https://wa.me/244936163587"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2"
+            <WhatsAppContactModal>
+              <Button
+                size="lg"
+                variant="outline"
+                className="bg-transparent border-primary-foreground/50 text-primary-foreground hover:bg-primary-foreground/10 hover:border-primary-foreground"
               >
-                <Phone className="h-5 w-5" />
+                <Phone className="h-5 w-5 mr-2" />
                 Falar no WhatsApp
-              </a>
-            </Button>
+              </Button>
+            </WhatsAppContactModal>
           </div>
         </div>
       </div>

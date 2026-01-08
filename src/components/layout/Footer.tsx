@@ -1,6 +1,6 @@
-import { Link } from "react-router-dom";
 import { Phone, Mail, MapPin, Facebook, Instagram } from "lucide-react";
 import logoNzingaFooter from "@/assets/logo-nzinga-footer.png";
+import { owners } from "@/components/ui/WhatsAppContactModal";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -35,15 +35,19 @@ const Footer = () => {
               Contactos
             </h4>
             <ul className="space-y-3">
-              <li>
-                <a
-                  href="tel:+244936163587"
-                  className="flex items-center gap-3 text-sm opacity-80 hover:opacity-100 transition-opacity"
-                >
-                  <Phone className="h-4 w-4" />
-                  +244 936 163 587
-                </a>
-              </li>
+              {owners.map((owner) => (
+                <li key={owner.whatsapp}>
+                  <a
+                    href={`https://wa.me/${owner.whatsapp}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 text-sm opacity-80 hover:opacity-100 transition-opacity"
+                  >
+                    <Phone className="h-4 w-4" />
+                    <span>{owner.name}: {owner.phone}</span>
+                  </a>
+                </li>
+              ))}
               <li>
                 <a
                   href="mailto:samuel587nzinga@gmail.com"
