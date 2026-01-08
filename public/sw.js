@@ -1,6 +1,9 @@
-const CACHE_NAME = 'nzinga-cache-v1';
-const STATIC_CACHE = 'nzinga-static-v1';
-const DYNAMIC_CACHE = 'nzinga-dynamic-v1';
+const STATIC_CACHE = 'nzinga-static-v2';
+const DYNAMIC_CACHE = 'nzinga-dynamic-v2';
+const MEDIA_CACHE = 'nzinga-media-v2';
+
+// Cache expiry: 10 days in milliseconds
+const CACHE_EXPIRY_MS = 10 * 24 * 60 * 60 * 1000;
 
 // Assets to cache immediately on install
 const STATIC_ASSETS = [
@@ -25,7 +28,7 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((keys) => {
       return Promise.all(
         keys
-          .filter((key) => key !== STATIC_CACHE && key !== DYNAMIC_CACHE)
+          .filter((key) => !key.includes('-v2'))
           .map((key) => caches.delete(key))
       );
     })
@@ -48,8 +51,11 @@ self.addEventListener('fetch', (event) => {
   if (url.hostname.includes('supabase')) return;
 
   // Handle different asset types with different strategies
-  if (isStaticAsset(url.pathname)) {
-    // Cache-first for static assets (images, videos, fonts, css, js)
+  if (isMediaAsset(url.pathname)) {
+    // Cache-first with 10-day expiry for media (images, videos)
+    event.respondWith(cacheFirstWithExpiry(request, MEDIA_CACHE));
+  } else if (isStaticAsset(url.pathname)) {
+    // Cache-first for other static assets (js, css, fonts)
     event.respondWith(cacheFirst(request, STATIC_CACHE));
   } else if (isPageRequest(request)) {
     // Network-first for HTML pages (fresher content)
@@ -60,15 +66,65 @@ self.addEventListener('fetch', (event) => {
   }
 });
 
-// Check if request is for a static asset
+// Check if request is for a media asset (images, videos)
+function isMediaAsset(pathname) {
+  return /\.(png|jpg|jpeg|gif|svg|webp|mp4|webm)$/i.test(pathname);
+}
+
+// Check if request is for a static asset (excluding media)
 function isStaticAsset(pathname) {
-  return /\.(js|css|png|jpg|jpeg|gif|svg|webp|mp4|webm|woff|woff2|ttf|eot)$/i.test(pathname);
+  return /\.(js|css|woff|woff2|ttf|eot)$/i.test(pathname);
 }
 
 // Check if request is for a page
 function isPageRequest(request) {
   return request.mode === 'navigate' || 
          request.headers.get('accept')?.includes('text/html');
+}
+
+// Cache-first with 10-day expiry - for media assets
+async function cacheFirstWithExpiry(request, cacheName) {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(request);
+  
+  if (cached) {
+    // Check cache timestamp
+    const cachedTime = cached.headers.get('sw-cache-time');
+    if (cachedTime) {
+      const age = Date.now() - parseInt(cachedTime);
+      if (age < CACHE_EXPIRY_MS) {
+        return cached; // Cache still valid
+      }
+      // Cache expired, delete and fetch fresh
+      await cache.delete(request);
+    } else {
+      // No timestamp, return cached (legacy)
+      return cached;
+    }
+  }
+  
+  try {
+    const response = await fetch(request);
+    if (response.ok) {
+      // Clone response and add cache timestamp
+      const headers = new Headers(response.headers);
+      headers.set('sw-cache-time', Date.now().toString());
+      
+      const cachedResponse = new Response(response.clone().body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: headers
+      });
+      
+      cache.put(request, cachedResponse);
+    }
+    return response;
+  } catch (error) {
+    // If network fails, try to return stale cache
+    const stale = await cache.match(request);
+    if (stale) return stale;
+    return new Response('Offline', { status: 503 });
+  }
 }
 
 // Cache-first strategy - best for static assets
