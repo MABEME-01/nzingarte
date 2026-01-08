@@ -194,12 +194,21 @@ const Auth = () => {
       });
     } else {
       if (data.user && !data.session) {
+        // Se não há sessão, significa que precisa de confirmação
         setView('confirm-email');
-      } else {
         toast({
           title: "Conta criada!",
-          description: "Bem-vindo ao Nzingarte!",
+          description: "Verifique o seu email para confirmar a conta. Se não receber, verifique a pasta de spam.",
         });
+      } else if (data.session) {
+        // Se há sessão, login automático (confirmação desativada)
+        toast({
+          title: "Conta criada!",
+          description: "Bem-vindo ao Nzingarte! Você já está logado.",
+        });
+        navigate("/");
+      } else {
+        setView('confirm-email');
       }
     }
     setLoading(false);
