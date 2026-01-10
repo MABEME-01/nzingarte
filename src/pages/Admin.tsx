@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { LogOut, LayoutDashboard, FileText, Image, Megaphone, ImageIcon, Video, Settings, Users, Wrench, MessageSquare } from "lucide-react";
+import { LogOut, LayoutDashboard, FileText, Image, Megaphone, ImageIcon, Video, Settings, Users, Wrench, MessageSquare, Crown } from "lucide-react";
 import { toast } from "sonner";
 import AdminQuotes from "@/components/admin/AdminQuotes";
 import AdminPortfolio from "@/components/admin/AdminPortfolio";
@@ -16,6 +16,7 @@ import AdminSettings from "@/components/admin/AdminSettings";
 import AdminFounderSocials from "@/components/admin/AdminFounderSocials";
 import AdminServices from "@/components/admin/AdminServices";
 import AdminTestimonials from "@/components/admin/AdminTestimonials";
+import AdminOwners from "@/components/admin/AdminOwners";
 import logoNzinga from "@/assets/logo-nzinga.png";
 
 const Admin = () => {
@@ -138,6 +139,10 @@ const Admin = () => {
               <ImageIcon className="h-4 w-4" />
               <span className="hidden sm:inline">Imagens</span>
             </TabsTrigger>
+            <TabsTrigger value="owners" className="flex items-center gap-2">
+              <Crown className="h-4 w-4" />
+              <span className="hidden sm:inline">Donos</span>
+            </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
               <span className="hidden sm:inline">Configurações</span>
@@ -182,6 +187,10 @@ const Admin = () => {
 
           <TabsContent value="settings">
             <AdminSettings />
+          </TabsContent>
+
+          <TabsContent value="owners">
+            <AdminOwners />
           </TabsContent>
         </Tabs>
       </main>
