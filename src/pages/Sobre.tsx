@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import Layout from "@/components/layout/Layout";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import Lightbox from "@/components/ui/Lightbox";
-import { CheckCircle, Target, Eye, Heart, Award, Users, Clock, MapPin, Camera, Phone } from "lucide-react";
+import { CheckCircle, Target, Eye, Heart, Award, Users, Clock, MapPin, Camera, Phone, Facebook, Instagram, Music2 } from "lucide-react";
 import portfolio1 from "@/assets/portfolio-1.jpg";
 import portfolio2 from "@/assets/portfolio-2.jpg";
 import portfolio3 from "@/assets/portfolio-3.jpg";
@@ -43,6 +44,7 @@ const valores = [
 
 const fundadores = [
   {
+    key: "samuel-nzinga",
     name: "Samuel Nzinga Júnior",
     role: "Fundador & CEO",
     phone: "+244 936 163 587",
@@ -53,6 +55,7 @@ const fundadores = [
     image: samuelPhoto,
   },
   {
+    key: "ndombe-makuta",
     name: "Ndombe Makuta",
     role: "Co-Fundador & Diretor de Operações",
     phone: "+244 948 120 646",
@@ -63,6 +66,7 @@ const fundadores = [
     image: ndombePhoto,
   },
   {
+    key: "bikuki-daniel",
     name: "Bikuki Daniel Júnior",
     role: "Co-Fundador & Diretor Comercial",
     phone: "+244 930 262 410",
@@ -73,6 +77,7 @@ const fundadores = [
     image: bikukiPhoto,
   },
   {
+    key: "paulo-mvemba",
     name: "Paulo Mvemba Nzinga",
     role: "Co-Fundador & Diretor de Fiscalização",
     phone: "+244 927 120 941",
@@ -83,6 +88,14 @@ const fundadores = [
     image: pauloPhoto,
   },
 ];
+
+interface SocialLinks {
+  [key: string]: {
+    facebook_url: string | null;
+    instagram_url: string | null;
+    tiktok_url: string | null;
+  };
+}
 
 const galeriaTrabalhos = [
   { src: portfolio1, title: "Projecto Residencial" },
@@ -112,6 +125,28 @@ const galeriaTrabalhos = [
 const Sobre = () => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [socialLinks, setSocialLinks] = useState<SocialLinks>({});
+
+  useEffect(() => {
+    const fetchSocialLinks = async () => {
+      const { data } = await supabase
+        .from("founder_social_links")
+        .select("founder_key, facebook_url, instagram_url, tiktok_url");
+      
+      if (data) {
+        const links: SocialLinks = {};
+        data.forEach((item) => {
+          links[item.founder_key] = {
+            facebook_url: item.facebook_url,
+            instagram_url: item.instagram_url,
+            tiktok_url: item.tiktok_url,
+          };
+        });
+        setSocialLinks(links);
+      }
+    };
+    fetchSocialLinks();
+  }, []);
 
   const openLightbox = (index: number) => {
     setCurrentImageIndex(index);
@@ -170,49 +205,94 @@ const Sobre = () => {
           </AnimatedSection>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {fundadores.map((fundador, index) => (
-              <AnimatedSection key={fundador.name} animation="fade-in-up" delay={index * 100}>
-                <div className="bg-card border border-border rounded-2xl overflow-hidden hover:shadow-elegant transition-shadow h-full flex flex-col">
-                  <div className="relative aspect-[3/4] overflow-hidden">
-                    <img 
-                      src={fundador.image} 
-                      alt={fundador.name} 
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" 
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <h3 className="font-display text-lg font-bold text-white">{fundador.name}</h3>
-                      <p className="text-white/80 text-sm">{fundador.role}</p>
+            {fundadores.map((fundador, index) => {
+              const socials = socialLinks[fundador.key];
+              const hasSocials = socials && (socials.facebook_url || socials.instagram_url || socials.tiktok_url);
+              
+              return (
+                <AnimatedSection key={fundador.name} animation="fade-in-up" delay={index * 100}>
+                  <div className="bg-card border border-border rounded-2xl overflow-hidden hover:shadow-elegant transition-shadow h-full flex flex-col">
+                    <div className="relative aspect-[3/4] overflow-hidden">
+                      <img 
+                        src={fundador.image} 
+                        alt={fundador.name} 
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" 
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                      <div className="absolute bottom-4 left-4 right-4">
+                        <h3 className="font-display text-lg font-bold text-white">{fundador.name}</h3>
+                        <p className="text-white/80 text-sm">{fundador.role}</p>
+                      </div>
+                    </div>
+                    <div className="p-5 flex-1 flex flex-col">
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                          {fundador.age} anos
+                        </span>
+                        <span className="text-xs bg-secondary text-muted-foreground px-2 py-1 rounded-full">
+                          {fundador.status}
+                        </span>
+                      </div>
+                      <p className="text-xs text-primary font-medium mb-2">
+                        {fundador.experience}
+                      </p>
+                      <p className="text-muted-foreground text-sm leading-relaxed mb-4 flex-1">
+                        {fundador.description}
+                      </p>
+                      
+                      {/* Social Links */}
+                      {hasSocials && (
+                        <div className="flex items-center gap-2 mb-3">
+                          {socials.facebook_url && (
+                            <a
+                              href={socials.facebook_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-2 rounded-full bg-[#1877F2]/10 text-[#1877F2] hover:bg-[#1877F2]/20 transition-colors"
+                              title="Facebook"
+                            >
+                              <Facebook className="h-4 w-4" />
+                            </a>
+                          )}
+                          {socials.instagram_url && (
+                            <a
+                              href={socials.instagram_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-2 rounded-full bg-[#E4405F]/10 text-[#E4405F] hover:bg-[#E4405F]/20 transition-colors"
+                              title="Instagram"
+                            >
+                              <Instagram className="h-4 w-4" />
+                            </a>
+                          )}
+                          {socials.tiktok_url && (
+                            <a
+                              href={socials.tiktok_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-2 rounded-full bg-foreground/10 text-foreground hover:bg-foreground/20 transition-colors"
+                              title="TikTok"
+                            >
+                              <Music2 className="h-4 w-4" />
+                            </a>
+                          )}
+                        </div>
+                      )}
+                      
+                      <a 
+                        href={`https://wa.me/${fundador.phone.replace(/\s/g, '').replace('+', '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors text-sm font-medium"
+                      >
+                        <Phone className="h-4 w-4" />
+                        {fundador.phone}
+                      </a>
                     </div>
                   </div>
-                  <div className="p-5 flex-1 flex flex-col">
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-                        {fundador.age} anos
-                      </span>
-                      <span className="text-xs bg-secondary text-muted-foreground px-2 py-1 rounded-full">
-                        {fundador.status}
-                      </span>
-                    </div>
-                    <p className="text-xs text-primary font-medium mb-2">
-                      {fundador.experience}
-                    </p>
-                    <p className="text-muted-foreground text-sm leading-relaxed mb-4 flex-1">
-                      {fundador.description}
-                    </p>
-                    <a 
-                      href={`https://wa.me/${fundador.phone.replace(/\s/g, '').replace('+', '')}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors text-sm font-medium"
-                    >
-                      <Phone className="h-4 w-4" />
-                      {fundador.phone}
-                    </a>
-                  </div>
-                </div>
-              </AnimatedSection>
-            ))}
+                </AnimatedSection>
+              );
+            })}
           </div>
           
           <AnimatedSection animation="fade-in-up" delay={500} className="mt-12 text-center">

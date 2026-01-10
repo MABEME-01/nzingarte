@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { LogOut, LayoutDashboard, FileText, Image, Megaphone, ImageIcon, Video, Settings } from "lucide-react";
+import { LogOut, LayoutDashboard, FileText, Image, Megaphone, ImageIcon, Video, Settings, Users, Wrench } from "lucide-react";
 import { toast } from "sonner";
 import AdminQuotes from "@/components/admin/AdminQuotes";
 import AdminPortfolio from "@/components/admin/AdminPortfolio";
@@ -13,6 +13,8 @@ import AdminAds from "@/components/admin/AdminAds";
 import AdminImages from "@/components/admin/AdminImages";
 import AdminVideos from "@/components/admin/AdminVideos";
 import AdminSettings from "@/components/admin/AdminSettings";
+import AdminFounderSocials from "@/components/admin/AdminFounderSocials";
+import AdminServices from "@/components/admin/AdminServices";
 import logoNzinga from "@/assets/logo-nzinga.png";
 
 const Admin = () => {
@@ -98,7 +100,7 @@ const Admin = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="grid grid-cols-7 w-full max-w-4xl">
+          <TabsList className="flex flex-wrap gap-1 w-full max-w-5xl h-auto p-1">
             <TabsTrigger value="dashboard" className="flex items-center gap-2">
               <LayoutDashboard className="h-4 w-4" />
               <span className="hidden sm:inline">Dashboard</span>
@@ -114,6 +116,14 @@ const Admin = () => {
             <TabsTrigger value="videos" className="flex items-center gap-2">
               <Video className="h-4 w-4" />
               <span className="hidden sm:inline">Vídeos</span>
+            </TabsTrigger>
+            <TabsTrigger value="services" className="flex items-center gap-2">
+              <Wrench className="h-4 w-4" />
+              <span className="hidden sm:inline">Serviços</span>
+            </TabsTrigger>
+            <TabsTrigger value="founders" className="flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              <span className="hidden sm:inline">Fundadores</span>
             </TabsTrigger>
             <TabsTrigger value="ads" className="flex items-center gap-2">
               <Megaphone className="h-4 w-4" />
@@ -143,6 +153,14 @@ const Admin = () => {
 
           <TabsContent value="videos">
             <AdminVideos />
+          </TabsContent>
+
+          <TabsContent value="services">
+            <AdminServices />
+          </TabsContent>
+
+          <TabsContent value="founders">
+            <AdminFounderSocials />
           </TabsContent>
 
           <TabsContent value="ads">

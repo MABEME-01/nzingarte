@@ -56,6 +56,78 @@ export type Database = {
         }
         Relationships: []
       }
+      custom_services: {
+        Row: {
+          created_at: string
+          description: string
+          display_order: number | null
+          icon: string
+          id: string
+          image_url: string
+          is_active: boolean | null
+          name: string
+          short_description: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          display_order?: number | null
+          icon?: string
+          id?: string
+          image_url: string
+          is_active?: boolean | null
+          name: string
+          short_description: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          display_order?: number | null
+          icon?: string
+          id?: string
+          image_url?: string
+          is_active?: boolean | null
+          name?: string
+          short_description?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      founder_social_links: {
+        Row: {
+          created_at: string
+          facebook_url: string | null
+          founder_key: string
+          founder_name: string
+          id: string
+          instagram_url: string | null
+          tiktok_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          facebook_url?: string | null
+          founder_key: string
+          founder_name: string
+          id?: string
+          instagram_url?: string | null
+          tiktok_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          facebook_url?: string | null
+          founder_key?: string
+          founder_name?: string
+          id?: string
+          instagram_url?: string | null
+          tiktok_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       gallery_videos: {
         Row: {
           created_at: string
