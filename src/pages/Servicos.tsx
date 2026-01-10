@@ -1,7 +1,9 @@
+import { useQuery } from "@tanstack/react-query";
 import Layout from "@/components/layout/Layout";
 import ServiceCard from "@/components/ui/ServiceCard";
 import AnimatedSection from "@/components/ui/AnimatedSection";
-import { services } from "@/data/services";
+import { services, Service } from "@/data/services";
+import { supabase } from "@/integrations/supabase/client";
 import { CheckCircle, Phone, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -16,6 +18,33 @@ const diferenciais = [
 ];
 
 const Servicos = () => {
+  // Fetch custom services from Supabase
+  const { data: customServices } = useQuery({
+    queryKey: ["custom-services"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("custom_services")
+        .select("*")
+        .eq("is_active", true)
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Convert custom services to Service format and combine with default services
+  const allServices: Service[] = [
+    ...services,
+    ...(customServices?.map((cs) => ({
+      id: cs.id,
+      name: cs.name,
+      description: cs.description,
+      shortDescription: cs.short_description,
+      icon: cs.icon,
+      image: cs.image_url,
+    })) || []),
+  ];
   return (
     <Layout>
       {/* Hero Section */}
@@ -68,7 +97,7 @@ const Servicos = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap justify-center gap-8 text-center text-primary-foreground">
             <div>
-              <p className="font-display text-3xl font-bold">{services.length}+</p>
+              <p className="font-display text-3xl font-bold">{allServices.length}+</p>
               <p className="text-sm opacity-80">Tipos de Serviços</p>
             </div>
             <div className="w-px bg-primary-foreground/30" />
@@ -104,7 +133,7 @@ const Servicos = () => {
           </AnimatedSection>
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((service, index) => (
+            {allServices.map((service, index) => (
               <AnimatedSection 
                 key={service.id} 
                 animation="fade-in-up" 
