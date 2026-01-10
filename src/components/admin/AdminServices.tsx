@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Wrench, Plus, Trash2, Edit2, Save, X, AlertTriangle, Upload, Image } from "lucide-react";
+import { Wrench, Plus, Trash2, Edit2, Save, X, AlertTriangle, Upload, Image, GripVertical } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
@@ -24,6 +24,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 // Emails dos donos autorizados
 const AUTHORIZED_OWNERS = [
@@ -59,6 +69,8 @@ const AdminServices = () => {
   const [editingService, setEditingService] = useState<CustomService | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [deleteService, setDeleteService] = useState<CustomService | null>(null);
+  const [draggedId, setDraggedId] = useState<string | null>(null);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -228,13 +240,8 @@ const AdminServices = () => {
     }
   };
 
-  const handleDelete = async (service: CustomService) => {
-    if (!isAuthorized) {
-      toast.error("Não está autorizado a realizar esta ação");
-      return;
-    }
-
-    if (!confirm(`Tem certeza que deseja excluir o serviço "${service.name}"?`)) {
+  const handleDelete = async () => {
+    if (!isAuthorized || !deleteService) {
       return;
     }
 
@@ -242,10 +249,11 @@ const AdminServices = () => {
       const { error } = await supabase
         .from("custom_services")
         .delete()
-        .eq("id", service.id);
+        .eq("id", deleteService.id);
 
       if (error) throw error;
       toast.success("Serviço excluído com sucesso!");
+      setDeleteService(null);
       fetchServices();
     } catch (error) {
       console.error("Erro ao excluir:", error);
@@ -274,6 +282,58 @@ const AdminServices = () => {
     }
   };
 
+  // Drag and drop handlers
+  const handleDragStart = (e: React.DragEvent, id: string) => {
+    setDraggedId(id);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  const handleDrop = async (e: React.DragEvent, targetId: string) => {
+    e.preventDefault();
+    if (!draggedId || draggedId === targetId || !isAuthorized) {
+      setDraggedId(null);
+      return;
+    }
+
+    const draggedIndex = services.findIndex((s) => s.id === draggedId);
+    const targetIndex = services.findIndex((s) => s.id === targetId);
+
+    if (draggedIndex === -1 || targetIndex === -1) return;
+
+    const newOrder = [...services];
+    const [removed] = newOrder.splice(draggedIndex, 1);
+    newOrder.splice(targetIndex, 0, removed);
+
+    // Optimistic update
+    setServices(newOrder);
+
+    try {
+      for (let i = 0; i < newOrder.length; i++) {
+        const { error } = await supabase
+          .from("custom_services")
+          .update({ display_order: i })
+          .eq("id", newOrder[i].id);
+        if (error) throw error;
+      }
+      toast.success("Ordem atualizada!");
+    } catch (error) {
+      console.error("Erro ao reordenar:", error);
+      toast.error("Erro ao reordenar serviços");
+      fetchServices(); // Revert on error
+    }
+
+    setDraggedId(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedId(null);
+  };
+
   if (loading) {
     return (
       <div className="space-y-4">
@@ -296,7 +356,7 @@ const AdminServices = () => {
             Gestão de Serviços
           </h2>
           <p className="text-muted-foreground">
-            Adicione ou edite serviços personalizados
+            Adicione ou edite serviços personalizados • Arraste para reordenar
           </p>
         </div>
 
@@ -478,8 +538,23 @@ const AdminServices = () => {
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {services.map((service) => (
-            <Card key={service.id} className={!service.is_active ? "opacity-60" : ""}>
+            <Card
+              key={service.id}
+              className={`transition-all ${!service.is_active ? "opacity-60" : ""} ${
+                draggedId === service.id ? "opacity-50 scale-95" : ""
+              } ${isAuthorized ? "cursor-move" : ""}`}
+              draggable={isAuthorized}
+              onDragStart={(e) => isAuthorized && handleDragStart(e, service.id)}
+              onDragOver={handleDragOver}
+              onDrop={(e) => handleDrop(e, service.id)}
+              onDragEnd={handleDragEnd}
+            >
               <div className="aspect-video relative overflow-hidden rounded-t-lg">
+                {isAuthorized && (
+                  <div className="absolute top-2 left-2 z-10 p-1 bg-background/80 rounded">
+                    <GripVertical className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                )}
                 <img
                   src={service.image_url}
                   alt={service.name}
@@ -519,7 +594,7 @@ const AdminServices = () => {
                   <Button
                     variant="destructive"
                     size="sm"
-                    onClick={() => handleDelete(service)}
+                    onClick={() => setDeleteService(service)}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -544,8 +619,32 @@ const AdminServices = () => {
           <p>
             Os serviços padrão do sistema não podem ser removidos, mas você pode adicionar novos serviços personalizados.
           </p>
+          <p>
+            <strong>Arraste os cards</strong> para reordenar os serviços na exibição.
+          </p>
         </CardContent>
       </Card>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deleteService} onOpenChange={(open) => !open && setDeleteService(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir Serviço</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir o serviço "{deleteService?.name}"? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={handleDelete}
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

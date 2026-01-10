@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, Star, Upload, X, GripVertical } from "lucide-react";
 import {
@@ -23,6 +23,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface Testimonial {
   id: string;
@@ -44,6 +54,8 @@ const AdminTestimonials = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [draggedId, setDraggedId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     role: "",
@@ -112,6 +124,7 @@ const AdminTestimonials = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-testimonials"] });
       toast.success("Testemunho excluído com sucesso!");
+      setDeleteId(null);
     },
     onError: (error) => {
       toast.error("Erro ao excluir testemunho: " + error.message);
@@ -129,6 +142,26 @@ const AdminTestimonials = () => {
     },
     onError: (error) => {
       toast.error("Erro ao atualizar status: " + error.message);
+    },
+  });
+
+  // Reorder mutation
+  const reorderMutation = useMutation({
+    mutationFn: async (updates: { id: string; display_order: number }[]) => {
+      for (const update of updates) {
+        const { error } = await supabase
+          .from("testimonials")
+          .update({ display_order: update.display_order })
+          .eq("id", update.id);
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-testimonials"] });
+      toast.success("Ordem atualizada!");
+    },
+    onError: (error) => {
+      toast.error("Erro ao reordenar: " + error.message);
     },
   });
 
@@ -186,7 +219,6 @@ const AdminTestimonials = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file
     if (!file.type.startsWith("image/")) {
       toast.error("Por favor, selecione um ficheiro de imagem");
       return;
@@ -221,6 +253,43 @@ const AdminTestimonials = () => {
     }
   };
 
+  // Drag and drop handlers
+  const handleDragStart = (e: React.DragEvent, id: string) => {
+    setDraggedId(id);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  const handleDrop = (e: React.DragEvent, targetId: string) => {
+    e.preventDefault();
+    if (!draggedId || draggedId === targetId || !testimonials) return;
+
+    const draggedIndex = testimonials.findIndex((t) => t.id === draggedId);
+    const targetIndex = testimonials.findIndex((t) => t.id === targetId);
+
+    if (draggedIndex === -1 || targetIndex === -1) return;
+
+    const newOrder = [...testimonials];
+    const [removed] = newOrder.splice(draggedIndex, 1);
+    newOrder.splice(targetIndex, 0, removed);
+
+    const updates = newOrder.map((item, index) => ({
+      id: item.id,
+      display_order: index + 1,
+    }));
+
+    reorderMutation.mutate(updates);
+    setDraggedId(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedId(null);
+  };
+
   const canAddMore = (testimonials?.length || 0) < MAX_TESTIMONIALS;
 
   if (isLoading) {
@@ -237,7 +306,7 @@ const AdminTestimonials = () => {
         <div>
           <h2 className="text-2xl font-bold">Testemunhos</h2>
           <p className="text-muted-foreground">
-            {testimonials?.length || 0} de {MAX_TESTIMONIALS} testemunhos
+            {testimonials?.length || 0} de {MAX_TESTIMONIALS} testemunhos • Arraste para reordenar
           </p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={(open) => {
@@ -381,14 +450,27 @@ const AdminTestimonials = () => {
       {/* Testimonials List */}
       <div className="grid gap-4">
         {testimonials?.map((testimonial) => (
-          <Card key={testimonial.id} className={!testimonial.is_active ? "opacity-60" : ""}>
+          <Card
+            key={testimonial.id}
+            className={`cursor-move transition-all ${
+              !testimonial.is_active ? "opacity-60" : ""
+            } ${draggedId === testimonial.id ? "opacity-50 scale-95" : ""}`}
+            draggable
+            onDragStart={(e) => handleDragStart(e, testimonial.id)}
+            onDragOver={handleDragOver}
+            onDrop={(e) => handleDrop(e, testimonial.id)}
+            onDragEnd={handleDragEnd}
+          >
             <CardContent className="p-4">
               <div className="flex items-start gap-4">
-                <img
-                  src={testimonial.image_url}
-                  alt={testimonial.name}
-                  className="w-12 h-12 rounded-full object-cover flex-shrink-0"
-                />
+                <div className="flex items-center gap-2">
+                  <GripVertical className="h-5 w-5 text-muted-foreground cursor-grab" />
+                  <img
+                    src={testimonial.image_url}
+                    alt={testimonial.name}
+                    className="w-12 h-12 rounded-full object-cover flex-shrink-0"
+                  />
+                </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <div>
@@ -417,11 +499,7 @@ const AdminTestimonials = () => {
                     variant="ghost"
                     size="icon"
                     className="text-destructive hover:text-destructive"
-                    onClick={() => {
-                      if (confirm("Tem certeza que deseja excluir este testemunho?")) {
-                        deleteMutation.mutate(testimonial.id);
-                      }
-                    }}
+                    onClick={() => setDeleteId(testimonial.id)}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -439,6 +517,27 @@ const AdminTestimonials = () => {
           </Card>
         )}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir Testemunho</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir este testemunho? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => deleteId && deleteMutation.mutate(deleteId)}
+            >
+              {deleteMutation.isPending ? "A excluir..." : "Excluir"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
