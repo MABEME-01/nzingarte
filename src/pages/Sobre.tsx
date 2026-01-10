@@ -25,7 +25,12 @@ import pladur from "@/assets/services/pladur.jpg";
 import sanitasLavatorios from "@/assets/services/sanitas-lavatorios.jpg";
 import sapateiras from "@/assets/services/sapateiras.jpg";
 import tectoFalso from "@/assets/services/tecto-falso.jpg";
-import { owners } from "@/components/ui/WhatsAppContactModal";
+
+// Owner photos
+import samuelPhoto from "@/assets/owners/samuel-nzinga.jpg";
+import ndombePhoto from "@/assets/owners/ndombe-makuta.jpg";
+import bikukiPhoto from "@/assets/owners/bikuki-daniel.jpg";
+import pauloPhoto from "@/assets/owners/paulo-mvemba.jpg";
 
 const valores = [
   "Qualidade em cada detalhe",
@@ -41,22 +46,41 @@ const fundadores = [
     name: "Samuel Nzinga Júnior",
     role: "Fundador & CEO",
     phone: "+244 936 163 587",
-    description: "Natural de Mbanza Kongo, Samuel é um empreendedor visionário que transformou a sua paixão pela decoração e construção numa empresa de referência na região. Com formação técnica em construção civil e anos de experiência prática, fundou a NZINGA'RTE com o objetivo de oferecer serviços de decoração de alta qualidade a preços acessíveis.",
-    image: portfolio1,
+    age: 27,
+    status: "Solteiro",
+    experience: "5 anos na construção civil",
+    description: "Samuel é um empreendedor visionário que transformou a sua paixão pela decoração e construção numa empresa de referência em Mbanza Kongo. Com 5 anos de experiência prática no sector da construção civil, fundou a NZINGA'RTE com o objetivo de oferecer serviços de decoração de alta qualidade a preços acessíveis.",
+    image: samuelPhoto,
   },
   {
     name: "Ndombe Makuta",
     role: "Co-Fundador & Diretor de Operações",
     phone: "+244 948 120 646",
-    description: "Ndombe Makuta é um profissional experiente em gestão de projectos e operações. Com um olhar atento aos detalhes e forte capacidade de liderança, garante que cada projecto é executado com excelência e dentro dos prazos estabelecidos.",
-    image: portfolio2,
+    age: 37,
+    status: "Solteiro",
+    experience: "10 anos na construção civil",
+    description: "Ndombe Makuta é o membro mais experiente da equipa, com 10 anos de experiência no sector da construção civil. Com um olhar atento aos detalhes e forte capacidade de liderança, garante que cada projecto é executado com excelência e dentro dos prazos estabelecidos.",
+    image: ndombePhoto,
   },
   {
     name: "Bikuki Daniel Júnior",
     role: "Co-Fundador & Diretor Comercial",
     phone: "+244 930 262 410",
-    description: "Bikuki Daniel Júnior é responsável pela área comercial e relacionamento com clientes. A sua dedicação ao atendimento personalizado e capacidade de entender as necessidades de cada cliente contribuem para o crescimento contínuo da empresa.",
-    image: portfolio3,
+    age: 29,
+    status: "Solteiro",
+    experience: "3 anos na construção civil",
+    description: "Bikuki Daniel Júnior é responsável pela área comercial e relacionamento com clientes. Com 3 anos de experiência na construção civil, a sua dedicação ao atendimento personalizado e capacidade de entender as necessidades de cada cliente contribuem para o crescimento contínuo da empresa.",
+    image: bikukiPhoto,
+  },
+  {
+    name: "Paulo Mvemba Nzinga",
+    role: "Co-Fundador & Diretor de Fiscalização",
+    phone: "+244 927 120 941",
+    age: 29,
+    status: "Casado",
+    experience: "6 anos em fiscalização e construção civil",
+    description: "Paulo Mvemba Nzinga traz 6 anos de experiência em fiscalização e construção civil. O seu rigor técnico e conhecimento profundo das normas de qualidade garantem que todos os projectos cumprem os mais altos padrões de excelência e segurança.",
+    image: pauloPhoto,
   },
 ];
 
@@ -120,7 +144,7 @@ const Sobre = () => {
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Clock className="h-5 w-5 text-primary" />
-                  <span>+8 Anos de Experiência</span>
+                  <span>+10 Anos de Experiência</span>
                 </div>
               </div>
             </AnimatedSection>
@@ -134,34 +158,45 @@ const Sobre = () => {
         </div>
       </section>
 
-      {/* Founders Section - Updated for 3 owners */}
+      {/* Founders Section - 4 owners */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <AnimatedSection animation="fade-in-up" className="text-center mb-12">
             <span className="text-primary font-medium text-sm uppercase tracking-wider">A Nossa Equipa</span>
             <h2 className="font-display text-3xl lg:text-4xl font-bold text-foreground mt-2">Os Fundadores</h2>
             <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
-              Conheça os três visionários por trás da NZINGA'RTE, unidos pela paixão de transformar espaços.
+              Conheça os quatro visionários por trás da NZINGA'RTE, unidos pela paixão de transformar espaços.
             </p>
           </AnimatedSection>
           
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {fundadores.map((fundador, index) => (
               <AnimatedSection key={fundador.name} animation="fade-in-up" delay={index * 100}>
                 <div className="bg-card border border-border rounded-2xl overflow-hidden hover:shadow-elegant transition-shadow h-full flex flex-col">
-                  <div className="relative aspect-[4/3] overflow-hidden">
+                  <div className="relative aspect-[3/4] overflow-hidden">
                     <img 
                       src={fundador.image} 
                       alt={fundador.name} 
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" 
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                     <div className="absolute bottom-4 left-4 right-4">
-                      <h3 className="font-display text-xl font-bold text-white">{fundador.name}</h3>
+                      <h3 className="font-display text-lg font-bold text-white">{fundador.name}</h3>
                       <p className="text-white/80 text-sm">{fundador.role}</p>
                     </div>
                   </div>
-                  <div className="p-6 flex-1 flex flex-col">
+                  <div className="p-5 flex-1 flex flex-col">
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                        {fundador.age} anos
+                      </span>
+                      <span className="text-xs bg-secondary text-muted-foreground px-2 py-1 rounded-full">
+                        {fundador.status}
+                      </span>
+                    </div>
+                    <p className="text-xs text-primary font-medium mb-2">
+                      {fundador.experience}
+                    </p>
                     <p className="text-muted-foreground text-sm leading-relaxed mb-4 flex-1">
                       {fundador.description}
                     </p>
@@ -180,20 +215,20 @@ const Sobre = () => {
             ))}
           </div>
           
-          <AnimatedSection animation="fade-in-up" delay={400} className="mt-12 text-center">
-            <div className="inline-flex items-center gap-4 p-6 rounded-2xl bg-secondary">
+          <AnimatedSection animation="fade-in-up" delay={500} className="mt-12 text-center">
+            <div className="inline-flex items-center gap-4 p-6 rounded-2xl bg-secondary flex-wrap justify-center">
               <div className="text-center">
                 <p className="font-display text-3xl font-bold text-primary">150+</p>
                 <p className="text-muted-foreground text-sm">Projectos</p>
               </div>
-              <div className="w-px h-12 bg-border" />
+              <div className="w-px h-12 bg-border hidden sm:block" />
               <div className="text-center">
-                <p className="font-display text-3xl font-bold text-primary">3</p>
+                <p className="font-display text-3xl font-bold text-primary">4</p>
                 <p className="text-muted-foreground text-sm">Fundadores</p>
               </div>
-              <div className="w-px h-12 bg-border" />
+              <div className="w-px h-12 bg-border hidden sm:block" />
               <div className="text-center">
-                <p className="font-display text-3xl font-bold text-primary">8+</p>
+                <p className="font-display text-3xl font-bold text-primary">10+</p>
                 <p className="text-muted-foreground text-sm">Anos</p>
               </div>
             </div>
