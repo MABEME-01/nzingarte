@@ -1,47 +1,71 @@
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import AnimatedSection from "@/components/ui/AnimatedSection";
+import { supabase } from "@/integrations/supabase/client";
 
-const testimonials = [
+interface Testimonial {
+  id: string;
+  name: string;
+  role: string;
+  image_url: string;
+  text: string;
+  rating: number;
+  display_order: number | null;
+  is_active: boolean | null;
+}
+
+// Fallback testimonials
+const fallbackTestimonials = [
   {
-    id: 1,
+    id: "1",
     name: "Esperança Luzolo",
     role: "Empresária, Mbanza Kongo",
-    image: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&h=150&fit=crop&crop=face",
+    image_url: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&h=150&fit=crop&crop=face",
     text: "A NZINGA'RTE fez a renovação completa da minha loja. O trabalho de pladur e pintura ficou impecável. Profissionalismo do mais alto nível!",
     rating: 5,
+    display_order: 1,
+    is_active: true,
   },
   {
-    id: 2,
+    id: "2",
     name: "João Mavungo",
     role: "Engenheiro Civil, Soyo",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+    image_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
     text: "Como profissional da construção, exijo qualidade. O Samuel e a sua equipa superaram as minhas expectativas no projecto do meu escritório.",
     rating: 5,
+    display_order: 2,
+    is_active: true,
   },
   {
-    id: 3,
+    id: "3",
     name: "Ana Kialungila",
     role: "Médica, M'banza Kongo",
-    image: "https://images.unsplash.com/photo-1589156280159-27a852cc6e1d?w=150&h=150&fit=crop&crop=face",
+    image_url: "https://images.unsplash.com/photo-1589156280159-27a852cc6e1d?w=150&h=150&fit=crop&crop=face",
     text: "Transformaram a minha casa num espaço moderno e acolhedor. O tecto falso com iluminação LED ficou espetacular. Recomendo a todos!",
     rating: 5,
+    display_order: 3,
+    is_active: true,
   },
   {
-    id: 4,
+    id: "4",
     name: "Pedro Nkanga",
     role: "Comerciante, Nzeto",
-    image: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=150&h=150&fit=crop&crop=face",
+    image_url: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=150&h=150&fit=crop&crop=face",
     text: "Excelente trabalho na cozinha americana e nos guarda-roupas. Material de qualidade e equipa muito profissional. Preço justo!",
     rating: 5,
+    display_order: 4,
+    is_active: true,
   },
   {
-    id: 5,
+    id: "5",
     name: "Teresa Mbumba",
     role: "Professora, Mbanza Kongo",
-    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face",
+    image_url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face",
     text: "O papel de parede e as placas 3D deram vida nova à minha sala. Trabalho limpo, rápido e com muito bom gosto. Obrigada NZINGA'RTE!",
     rating: 5,
+    display_order: 5,
+    is_active: true,
   },
 ];
 
@@ -100,6 +124,24 @@ const AnimatedCounter = ({ value, suffix }: { value: number; suffix: string }) =
 const TestimonialsSection = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // Fetch testimonials from Supabase
+  const { data: dbTestimonials } = useQuery({
+    queryKey: ["testimonials"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("testimonials")
+        .select("*")
+        .eq("is_active", true)
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+      return data as Testimonial[];
+    },
+  });
+
+  // Use database testimonials or fallback
+  const testimonials = dbTestimonials?.length ? dbTestimonials : fallbackTestimonials;
+
   const nextTestimonial = () => {
     setCurrentIndex((prev) => (prev + 1) % testimonials.length);
   };
@@ -111,9 +153,9 @@ const TestimonialsSection = () => {
   useEffect(() => {
     const timer = setInterval(nextTestimonial, 6000);
     return () => clearInterval(timer);
-  }, []);
+  }, [testimonials.length]);
 
-  const currentTestimonial = testimonials[currentIndex];
+  const currentTestimonial = testimonials[currentIndex] || testimonials[0];
 
   return (
     <section className="py-20 bg-secondary/30">
@@ -148,7 +190,7 @@ const TestimonialsSection = () => {
             
             <div className="flex flex-col items-center text-center">
               <img
-                src={currentTestimonial.image}
+                src={currentTestimonial.image_url}
                 alt={currentTestimonial.name}
                 className="w-20 h-20 rounded-full object-cover mb-6 ring-4 ring-primary/20"
               />

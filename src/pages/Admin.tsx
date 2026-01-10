@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { LogOut, LayoutDashboard, FileText, Image, Megaphone, ImageIcon, Video, Settings, Users, Wrench } from "lucide-react";
+import { LogOut, LayoutDashboard, FileText, Image, Megaphone, ImageIcon, Video, Settings, Users, Wrench, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import AdminQuotes from "@/components/admin/AdminQuotes";
 import AdminPortfolio from "@/components/admin/AdminPortfolio";
@@ -15,6 +15,7 @@ import AdminVideos from "@/components/admin/AdminVideos";
 import AdminSettings from "@/components/admin/AdminSettings";
 import AdminFounderSocials from "@/components/admin/AdminFounderSocials";
 import AdminServices from "@/components/admin/AdminServices";
+import AdminTestimonials from "@/components/admin/AdminTestimonials";
 import logoNzinga from "@/assets/logo-nzinga.png";
 
 const Admin = () => {
@@ -125,6 +126,10 @@ const Admin = () => {
               <Users className="h-4 w-4" />
               <span className="hidden sm:inline">Fundadores</span>
             </TabsTrigger>
+            <TabsTrigger value="testimonials" className="flex items-center gap-2">
+              <MessageSquare className="h-4 w-4" />
+              <span className="hidden sm:inline">Testemunhos</span>
+            </TabsTrigger>
             <TabsTrigger value="ads" className="flex items-center gap-2">
               <Megaphone className="h-4 w-4" />
               <span className="hidden sm:inline">Anúncios</span>
@@ -161,6 +166,10 @@ const Admin = () => {
 
           <TabsContent value="founders">
             <AdminFounderSocials />
+          </TabsContent>
+
+          <TabsContent value="testimonials">
+            <AdminTestimonials />
           </TabsContent>
 
           <TabsContent value="ads">
