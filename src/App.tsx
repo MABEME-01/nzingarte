@@ -12,6 +12,7 @@ const Sobre = lazy(() => import("./pages/Sobre"));
 const Servicos = lazy(() => import("./pages/Servicos"));
 const ServicoDetalhe = lazy(() => import("./pages/ServicoDetalhe"));
 const Portfolio = lazy(() => import("./pages/Portfolio"));
+const Galeria = lazy(() => import("./pages/Galeria"));
 const Cursos = lazy(() => import("./pages/Cursos"));
 const Contactos = lazy(() => import("./pages/Contactos"));
 const Auth = lazy(() => import("./pages/Auth"));
@@ -21,9 +22,10 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 10, // 10 minutes
-      refetchOnWindowFocus: false,
+      staleTime: 1000 * 30, // 30 seconds - dados mais frescos
+      gcTime: 1000 * 60 * 5, // 5 minutes
+      refetchOnWindowFocus: true, // refetch quando volta à tab
+      refetchOnReconnect: true, // refetch quando reconecta
       retry: 1,
     },
   },
@@ -42,6 +44,7 @@ const App = () => (
             <Route path="/servicos" element={<Servicos />} />
             <Route path="/servicos/:id" element={<ServicoDetalhe />} />
             <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/galeria" element={<Galeria />} />
             <Route path="/cursos" element={<Cursos />} />
             <Route path="/contactos" element={<Contactos />} />
             <Route path="/auth" element={<Auth />} />

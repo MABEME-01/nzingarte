@@ -8,6 +8,8 @@ import logoNzinga from "@/assets/logo-nzinga-novo.png";
 
 const navLinks = [
   { name: "Início", path: "/" },
+  { name: "Sobre Nós", path: "/sobre" },
+  { name: "Galeria", path: "/galeria" },
   { name: "Portfólio", path: "/portfolio" },
   { name: "Contactos", path: "/contactos" },
 ];
